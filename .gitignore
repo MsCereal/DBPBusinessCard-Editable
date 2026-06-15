@@ -1,0 +1,15 @@
+## .NET / ASP.NET Core
+bin/
+obj/
+.vs/
+*.user
+*.suo
+publish_output/
+
+## Logs
+*.log
+logs/
+
+## OS
+.DS_Store
+Thumbs.db

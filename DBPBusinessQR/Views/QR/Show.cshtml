@@ -1,0 +1,136 @@
+@{
+    ViewData["Title"] = "Scan QR Code";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DBP – Scan QR Code</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #111827;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .qr-wrap {
+            text-align: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .brand-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #dc2626);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .brand-logo span {
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .brand-text {
+            color: #f9fafb;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .qr-frame {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            display: inline-block;
+            box-shadow: 0 0 0 6px rgba(37,99,235,0.4), 0 20px 50px rgba(0,0,0,0.5);
+            margin-bottom: 24px;
+        }
+
+        .qr-frame img {
+            display: block;
+            width: 240px;
+            height: 240px;
+            border-radius: 8px;
+        }
+
+        .instruction {
+            color: #9ca3af;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .instruction strong {
+            color: #f3f4f6;
+        }
+
+        .arrow {
+            font-size: 22px;
+            display: block;
+            margin: 10px 0 6px;
+            animation: bounce 1.4s infinite;
+        }
+
+        @@keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(6px); }
+        }
+
+        .divider {
+            width: 60px;
+            height: 2px;
+            background: #374151;
+            margin: 22px auto;
+            border-radius: 2px;
+        }
+
+        .url-hint {
+            color: #6b7280;
+            font-size: 12px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<div class="qr-wrap">
+    <div class="brand">
+        <div class="brand-logo"><span>DBP</span></div>
+        <span class="brand-text">Digital Business Card</span>
+    </div>
+
+    <div class="qr-frame">
+        <img src="/QR/Generate" alt="DBP QR Code" />
+    </div>
+
+    <p class="instruction">
+        <strong>Point your phone camera at the QR code</strong>
+    </p>
+    <span class="arrow">↑</span>
+    <p class="instruction">Tap the link that appears to open the digital card</p>
+
+    <div class="divider"></div>
+    <p class="url-hint">Scans to: <strong style="color:#60a5fa">/Home/Index</strong> on this server</p>
+</div>
+
+</body>
+</html>

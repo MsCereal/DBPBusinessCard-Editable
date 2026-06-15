@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Digital Card";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Chelsea – DBP Digital Card</title>
+    <link rel="stylesheet" href="~/css/card.css" />
+</head>
+<body>
+
+<div class="card-wrapper">
+    <div class="card">
+
+        <!-- DBP Logo -->
+        <div class="logo-wrap">
+            <div class="logo"></div>
+        </div>
+
+        <h1>Chelsea</h1>
+        <p class="title">Software Engineer &amp; Cybersecurity Analyst</p>
+        <p class="org">Development Bank of the Philippines</p>
+
+        <div class="divider"></div>
+
+        <!-- Call: opens native phone dialer on mobile -->
+        <a class="btn call" href="tel:+639614475634">
+            <span class="icon">📞</span> Call
+        </a>
+
+        <!-- Email: opens mail app -->
+        <a class="btn email" href="mailto:cdepurificacion@dbp.ph">
+            <span class="icon">✉️</span> Email
+        </a>
+
+        <!-- Save Contact: downloads .vcf → phone offers to save to Contacts with name & number -->
+        <a class="btn save" href="/Home/DownloadContact">
+            <span class="icon">💾</span> Save to Contacts
+        </a>
+
+        <div class="divider"></div>
+
+        <a class="btn github" href="https://github.com/MsCereal" target="_blank" rel="noopener">
+            <span class="icon">🐙</span> GitHub
+        </a>
+
+        <a class="btn linkedin" href="https://www.linkedin.com/in/chelsea-denise-purificacion" target="_blank" rel="noopener">
+            <span class="icon">💼</span> LinkedIn
+        </a>
+
+        <a class="btn site" href="https://www.majestyk.com" target="_blank" rel="noopener">
+            <span class="icon">🌐</span> Portfolio
+        </a>
+
+    </div>
+</div>
+
+</body>
+</html>
