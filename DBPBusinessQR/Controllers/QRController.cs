@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using QRCoder;
@@ -21,66 +22,50 @@ namespace DBPBusinessQR.Controllers
         {
             string url = $"{Request.Scheme}://{Request.Host}/Home/Index";
 
-            // 1 — Generate raw QR bytes using QRCoder (ECCLevel H = 30% error correction so logo doesn't break it)
+            // 1 — Generate QR with high error correction (H = 30%) so logo doesn't break scanning
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.H);
             PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
             byte[] qrBytes = qrCode.GetGraphic(20);
 
-            // 2 — Load QR into SkiaSharp bitmap
+            // 2 — Load QR bitmap
             using SKBitmap qrBitmap = SKBitmap.Decode(qrBytes);
             int size = qrBitmap.Width;
 
-            // 3 — Create canvas to draw on
+            // 3 — Create output canvas
             using SKBitmap output = new SKBitmap(size, size);
             using SKCanvas canvas = new SKCanvas(output);
             canvas.DrawBitmap(qrBitmap, 0, 0);
 
-            // 4 — Logo dimensions: ~22% of QR size centered
-            int logoSize = (int)(size * 0.22f);
+            // 4 — Load the real DBP logo from wwwroot
+            string logoPath = Path.Combine(
+                Directory.GetCurrentDirectory(), "wwwroot", "dbp-logo.png");
+
+            using SKBitmap logoBitmap = SKBitmap.Decode(logoPath);
+
+            // 5 — Logo size: 26% of QR, centered
+            int logoSize = (int)(size * 0.26f);
             int logoX = (size - logoSize) / 2;
             int logoY = (size - logoSize) / 2;
-            float cx = size / 2f;
-            float cy = size / 2f;
-            float radius = logoSize / 2f;
 
-            // 5 — White backing circle (slightly larger for padding)
+            // 6 — White rounded backing square for clean edge (slightly larger)
+            int pad = (int)(size * 0.02f);
             using (var whitePaint = new SKPaint { IsAntialias = true, Color = SKColors.White })
             {
-                canvas.DrawCircle(cx, cy, radius + 6, whitePaint);
+                var rect = new SKRoundRect(
+                    new SKRect(logoX - pad, logoY - pad, logoX + logoSize + pad, logoY + logoSize + pad),
+                    10, 10);
+                canvas.DrawRoundRect(rect, whitePaint);
             }
 
-            // 6 — Gradient circle: blue (#2563eb) to red (#dc2626)
-            using (var gradientPaint = new SKPaint { IsAntialias = true })
+            // 7 — Draw the logo scaled into the center
+            var destRect = new SKRect(logoX, logoY, logoX + logoSize, logoY + logoSize);
+            using (var logoPaint = new SKPaint { IsAntialias = true, FilterQuality = SKFilterQuality.High })
             {
-                gradientPaint.Shader = SKShader.CreateLinearGradient(
-                    new SKPoint(logoX, logoY),
-                    new SKPoint(logoX + logoSize, logoY + logoSize),
-                    new SKColor[] { new SKColor(0x25, 0x63, 0xeb), new SKColor(0xdc, 0x26, 0x26) },
-                    null,
-                    SKShaderTileMode.Clamp
-                );
-                canvas.DrawCircle(cx, cy, radius, gradientPaint);
+                canvas.DrawBitmap(logoBitmap, destRect, logoPaint);
             }
 
-            // 7 — "DBP" text in white centered on the circle
-            using (var textPaint = new SKPaint
-            {
-                IsAntialias = true,
-                Color = SKColors.White,
-                TextAlign = SKTextAlign.Center,
-                FakeBoldText = true,
-                TextSize = logoSize * 0.36f
-            })
-            {
-                // Center text vertically
-                SKRect textBounds = new SKRect();
-                textPaint.MeasureText("DBP", ref textBounds);
-                float textY = cy - textBounds.MidY;
-                canvas.DrawText("DBP", cx, textY, textPaint);
-            }
-
-            // 8 — Encode final image as PNG and return
+            // 8 — Return final PNG
             using SKImage finalImage = SKImage.FromBitmap(output);
             using SKData finalData = finalImage.Encode(SKEncodedImageFormat.Png, 100);
             return File(finalData.ToArray(), "image/png");
