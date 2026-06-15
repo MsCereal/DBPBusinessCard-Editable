@@ -112,7 +112,7 @@
 
         .brand-text {
             color: #f9fafb;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
             letter-spacing: 0.5px;
         }
@@ -141,60 +141,71 @@
         }
 
         .instruction {
-            color: #cbd5e1;
-            font-size: 15px;
+            color: #94a3b8;
+            font-size: 12px;
+            letter-spacing: 1.5px;
             line-height: 1.6;
         }
 
         .instruction strong {
-            color: #f1f5f9;
-        }
-
-        .arrow {
-            font-size: 24px;
-            display: block;
-            margin: 10px 0 6px;
-            color: #94a3b8;
-            animation: bounce 1.4s ease-in-out infinite;
-        }
-
-        @@keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50%       { transform: translateY(6px); }
-        }
-
-        .divider {
-            width: 60px;
-            height: 1px;
-            background: rgba(255,255,255,0.15);
-            margin: 20px auto;
-        }
-
-        .url-hint {
-            color: #475569;
+            color: #cbd5e1;
             font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .or-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 14px auto;
+            max-width: 300px;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.12);
+        }
+
+        .or-text {
+            color: #475569;
+            font-size: 11px;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        .copy-label {
+            color: #64748b;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
         }
 
         /* ── Copy link section ── */
         .copy-section {
-            margin-top: 20px;
+            margin-top: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 8px;
+            max-width: 340px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .copy-link-box {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
+            flex: 1;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
             border-radius: 10px;
-            padding: 10px 16px;
-            color: #93c5fd;
-            font-size: 13px;
+            padding: 10px 14px;
+            color: #60a5fa;
+            font-size: 12px;
             word-break: break-all;
-            max-width: 260px;
             text-align: left;
+            min-width: 0;
         }
 
         .copy-btn {
@@ -202,15 +213,16 @@
             color: white;
             border: none;
             border-radius: 10px;
-            padding: 10px 18px;
+            padding: 10px 16px;
             font-size: 13px;
             font-weight: bold;
             cursor: pointer;
             transition: background 0.15s, transform 0.1s;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
-        .copy-btn:hover { background: #1d4ed8; }
+        .copy-btn:hover  { background: #1d4ed8; }
         .copy-btn:active { transform: scale(0.97); }
         .copy-btn.copied { background: #16a34a; }
     </style>
@@ -235,19 +247,14 @@
         <img src="/QR/Generate" alt="DBP QR Code" />
     </div>
 
-    <p class="instruction">
-        <strong>Point your phone camera at the QR code</strong>
-    </p>
-    <span class="arrow">↓</span>
-    <p class="instruction">Tap the link that appears to open the digital card</p>
+    <p class="instruction"><strong>SCAN THE QR CODE</strong></p>
 
-    <div class="divider"></div>
-    <p class="url-hint">Scans to: <strong style="color:#60a5fa">/Home/Index</strong> on this server</p>
+    <div class="or-divider"><span class="or-text">OR</span></div>
 
-    <!-- Copy link section -->
+    <p class="copy-label">COPY THE LINK</p>
     <div class="copy-section">
-        <div class="copy-link-box" id="linkDisplay">Loading link...</div>
-        <button class="copy-btn" id="copyBtn" onclick="copyLink()">📋 Copy Link</button>
+        <div class="copy-link-box" id="linkDisplay">Loading...</div>
+        <button class="copy-btn" id="copyBtn" onclick="copyLink()">📋 Copy</button>
     </div>
 </div>
 
