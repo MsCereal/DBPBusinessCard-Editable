@@ -7,21 +7,82 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DBP – Scan QR Code</title>
+    <title>DBP – Digital Business Card</title>
+    <!-- DBP favicon/tab icon -->
+    <link rel="icon" type="image/png" href="/dbp-icon.png" />
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+        /* ── Animated moving background ── */
         body {
             font-family: Arial, sans-serif;
-            background: #111827;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             padding: 30px 20px;
+            overflow: hidden;
+            background: #0f172a;
+            position: relative;
         }
 
+        /* Canvas of floating blobs */
+        .bg-blobs {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.45;
+            animation: floatBlob linear infinite;
+        }
+
+        .blob-1 {
+            width: 420px; height: 420px;
+            background: #2563eb;
+            top: -100px; left: -100px;
+            animation-duration: 18s;
+            animation-delay: 0s;
+        }
+        .blob-2 {
+            width: 340px; height: 340px;
+            background: #dc2626;
+            bottom: -80px; right: -80px;
+            animation-duration: 22s;
+            animation-delay: -6s;
+        }
+        .blob-3 {
+            width: 260px; height: 260px;
+            background: #1d4ed8;
+            top: 40%; left: 60%;
+            animation-duration: 15s;
+            animation-delay: -3s;
+        }
+        .blob-4 {
+            width: 200px; height: 200px;
+            background: #b91c1c;
+            top: 20%; right: 10%;
+            animation-duration: 20s;
+            animation-delay: -10s;
+        }
+
+        @@keyframes floatBlob {
+            0%   { transform: translate(0, 0) scale(1); }
+            25%  { transform: translate(40px, -30px) scale(1.08); }
+            50%  { transform: translate(20px, 50px) scale(0.95); }
+            75%  { transform: translate(-30px, 20px) scale(1.05); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* ── Content ── */
         .qr-wrap {
+            position: relative;
+            z-index: 1;
             text-align: center;
         }
 
@@ -37,17 +98,15 @@
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #2563eb, #dc2626);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
             flex-shrink: 0;
         }
 
-        .brand-logo span {
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
+        .brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .brand-text {
@@ -62,32 +121,40 @@
             border-radius: 20px;
             padding: 20px;
             display: inline-block;
-            box-shadow: 0 0 0 6px rgba(37,99,235,0.4), 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 0 0 5px rgba(255,255,255,0.15),
+                        0 20px 60px rgba(0,0,0,0.5);
             margin-bottom: 24px;
+            animation: qrPulse 3s ease-in-out infinite;
+        }
+
+        @@keyframes qrPulse {
+            0%, 100% { box-shadow: 0 0 0 5px rgba(255,255,255,0.15), 0 20px 60px rgba(0,0,0,0.5); }
+            50%       { box-shadow: 0 0 0 10px rgba(37,99,235,0.3), 0 24px 70px rgba(0,0,0,0.6); }
         }
 
         .qr-frame img {
             display: block;
-            width: 240px;
-            height: 240px;
+            width: 250px;
+            height: 250px;
             border-radius: 8px;
         }
 
         .instruction {
-            color: #9ca3af;
+            color: #cbd5e1;
             font-size: 15px;
             line-height: 1.6;
         }
 
         .instruction strong {
-            color: #f3f4f6;
+            color: #f1f5f9;
         }
 
         .arrow {
-            font-size: 22px;
+            font-size: 24px;
             display: block;
             margin: 10px 0 6px;
-            animation: bounce 1.4s infinite;
+            color: #94a3b8;
+            animation: bounce 1.4s ease-in-out infinite;
         }
 
         @@keyframes bounce {
@@ -97,24 +164,32 @@
 
         .divider {
             width: 60px;
-            height: 2px;
-            background: #374151;
-            margin: 22px auto;
-            border-radius: 2px;
+            height: 1px;
+            background: rgba(255,255,255,0.15);
+            margin: 20px auto;
         }
 
         .url-hint {
-            color: #6b7280;
+            color: #475569;
             font-size: 12px;
-            word-break: break-all;
         }
     </style>
 </head>
 <body>
 
+<!-- Animated background blobs -->
+<div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+</div>
+
 <div class="qr-wrap">
     <div class="brand">
-        <div class="brand-logo"><span>DBP</span></div>
+        <div class="brand-logo">
+            <img src="/dbp-icon.png" alt="DBP" />
+        </div>
         <span class="brand-text">Digital Business Card</span>
     </div>
 
@@ -125,7 +200,7 @@
     <p class="instruction">
         <strong>Point your phone camera at the QR code</strong>
     </p>
-    <span class="arrow">↑</span>
+    <span class="arrow">↓</span>
     <p class="instruction">Tap the link that appears to open the digital card</p>
 
     <div class="divider"></div>
