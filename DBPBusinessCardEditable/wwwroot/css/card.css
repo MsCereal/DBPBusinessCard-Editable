@@ -40,15 +40,14 @@ body {
 /* ---- Logo ---- */
 .logo-wrap {
     margin-bottom: 16px;
+    text-align: center;
 }
 
-.logo {
+.logo-img {
     width: 72px;
     height: 72px;
+    object-fit: contain;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2563eb, #dc2626);
-    margin: 0 auto;
-    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
 }
 
 /* ---- Name & titles ---- */
@@ -114,6 +113,13 @@ h1 {
 .github   { background: #111827; }   /* dark */
 .linkedin { background: #1d4ed8; }   /* blue */
 .site     { background: #ef4444; }   /* red  */
+.edit-btn { background: #7c3aed; }   /* purple — owner only */
+
+.empty-note {
+    color: #9ca3af;
+    font-size: 13px;
+    font-style: italic;
+}
 
 /* ---- Mobile tweaks ---- */
 @media (max-width: 480px) {

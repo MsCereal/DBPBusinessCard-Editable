@@ -1,13 +1,9 @@
+using DBPBusinessCardEditable.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DBPBusinessCardEditable
 {
@@ -24,6 +20,8 @@ namespace DBPBusinessCardEditable
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            // Single shared store — each user identified by cookie
+            services.AddSingleton<CardProfileService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +46,7 @@ namespace DBPBusinessCardEditable
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers(); // supports [HttpGet("/card/{userId}")] etc.
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=QR}/{action=Show}/{id?}");

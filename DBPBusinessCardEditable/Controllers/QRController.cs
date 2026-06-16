@@ -1,30 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using QRCoder;
 using SkiaSharp;
+using System;
+using System.IO;
 
 namespace DBPBusinessCardEditable.Controllers
 {
     public class QRController : Controller
     {
-        // /QR/Show  — display the QR code on screen (use this to scan from your phone)
+        private const string CookieName = "dbp_user_id";
+
+        // GET /QR/Show  — display the QR code page
         public IActionResult Show()
         {
             return View();
         }
 
-        // /QR/Generate  — returns the QR PNG with DBP logo in the center
+        // GET /QR/Generate  — returns the QR PNG with DBP logo, unique per user
         public IActionResult Generate()
         {
             try
             {
-                string url = $"{Request.Scheme}://{Request.Host}/Home/Index";
+                string userId = GetOrCreateUserId();
+                string url = $"{Request.Scheme}://{Request.Host}/card/{userId}";
 
-                // 1 — Generate QR with high error correction (H = 30%)
+                // 1 — Generate QR with high error correction
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.H);
                 PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
@@ -41,23 +42,20 @@ namespace DBPBusinessCardEditable.Controllers
                 using SKCanvas canvas = new SKCanvas(output);
                 canvas.DrawBitmap(qrBitmap, 0, 0);
 
-                // 4 — Load the real DBP logo from wwwroot
+                // 4 — Load the DBP logo from wwwroot
                 string logoPath = Path.Combine(
                     Directory.GetCurrentDirectory(), "wwwroot", "dbp-logo.png");
 
                 if (System.IO.File.Exists(logoPath))
                 {
                     using SKBitmap logoBitmap = SKBitmap.Decode(logoPath);
-
                     if (logoBitmap != null)
                     {
-                        // 5 — Logo size: 26% of QR, centered
                         int logoSize = (int)(size * 0.26f);
                         int logoX = (size - logoSize) / 2;
                         int logoY = (size - logoSize) / 2;
-
-                        // 6 — White backing square
                         int pad = (int)(size * 0.02f);
+
                         using (var whitePaint = new SKPaint { IsAntialias = true, Color = SKColors.White })
                         {
                             var rect = new SKRoundRect(
@@ -66,7 +64,6 @@ namespace DBPBusinessCardEditable.Controllers
                             canvas.DrawRoundRect(rect, whitePaint);
                         }
 
-                        // 7 — Draw logo centered
                         var destRect = new SKRect(logoX, logoY, logoX + logoSize, logoY + logoSize);
                         using (var logoPaint = new SKPaint { IsAntialias = true, FilterQuality = SKFilterQuality.High })
                         {
@@ -75,21 +72,35 @@ namespace DBPBusinessCardEditable.Controllers
                     }
                 }
 
-                // 8 — Return final PNG
                 using SKImage finalImage = SKImage.FromBitmap(output);
                 using SKData finalData = finalImage.Encode(SKEncodedImageFormat.Png, 100);
                 return File(finalData.ToArray(), "image/png");
             }
             catch
             {
-                // Fallback: return plain QR without logo if anything fails
-                string url = $"{Request.Scheme}://{Request.Host}/Home/Index";
+                string userId = GetOrCreateUserId();
+                string url = $"{Request.Scheme}://{Request.Host}/card/{userId}";
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.H);
                 PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
                 byte[] qrBytes = qrCode.GetGraphic(20);
                 return File(qrBytes, "image/png");
             }
+        }
+
+        private string GetOrCreateUserId()
+        {
+            if (Request.Cookies.TryGetValue(CookieName, out string existing) && !string.IsNullOrWhiteSpace(existing))
+                return existing;
+
+            string newId = Guid.NewGuid().ToString("N");
+            Response.Cookies.Append(CookieName, newId, new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddYears(10),
+                IsEssential = true,
+                SameSite = SameSiteMode.Lax
+            });
+            return newId;
         }
     }
 }

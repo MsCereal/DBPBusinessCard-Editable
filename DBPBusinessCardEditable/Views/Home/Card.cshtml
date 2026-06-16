@@ -1,13 +1,30 @@
-﻿@{
+﻿@model DBPBusinessCardEditable.Models.CardProfile
+@{
     ViewData["Title"] = "Digital Card";
     Layout = null;
+
+    bool isEmpty = string.IsNullOrWhiteSpace(Model?.Name);
+
+    string name      = isEmpty ? "Your Name" : Model.Name;
+    string title     = isEmpty ? "Your Title" : Model.Title;
+    string org       = isEmpty ? "Your Organisation" : Model.Org;
+    string phone     = Model?.Phone ?? "";
+    string email     = Model?.Email ?? "";
+    string github    = Model?.GitHub ?? "";
+    string linkedin  = Model?.LinkedIn ?? "";
+    string portfolio = Model?.Portfolio ?? "";
+
+    // Is the viewer the owner? (owns the cookie = same userId)
+    bool isOwner = Context.Request.Cookies.TryGetValue("dbp_user_id", out string cookieId)
+                   && cookieId == Model?.UserId;
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Chelsea – DBP Digital Card</title>
+    <title>@name – DBP Digital Card</title>
+    <link rel="icon" type="image/png" href="/dbp-icon.png" />
     <link rel="stylesheet" href="~/css/card.css" />
 </head>
 <body>
@@ -17,43 +34,82 @@
 
         <!-- DBP Logo -->
         <div class="logo-wrap">
-            <div class="logo"></div>
+            <img src="/dbp-logo.png" alt="DBP Logo" class="logo-img" />
         </div>
 
-        <h1>Chelsea</h1>
-        <p class="title">Software Engineer &amp; Cybersecurity Analyst</p>
-        <p class="org">Development Bank of the Philippines</p>
+        <h1>@name</h1>
+        @if (!string.IsNullOrWhiteSpace(title))
+        {
+            <p class="title">@title</p>
+        }
+        @if (!string.IsNullOrWhiteSpace(org))
+        {
+            <p class="org">@org</p>
+        }
 
         <div class="divider"></div>
 
-        <!-- Call: opens native phone dialer on mobile -->
-        <a class="btn call" href="tel:+639614475634">
-            <span class="icon">📞</span> Call
-        </a>
+        @if (!string.IsNullOrWhiteSpace(phone))
+        {
+            <a class="btn call" href="tel:@phone">
+                <span class="icon">📞</span> Call
+            </a>
+        }
 
-        <!-- Email: opens mail app -->
-        <a class="btn email" href="mailto:cdepurificacion@dbp.ph">
-            <span class="icon">✉️</span> Email
-        </a>
+        @if (!string.IsNullOrWhiteSpace(email))
+        {
+            <a class="btn email" href="mailto:@email">
+                <span class="icon">✉️</span> Email
+            </a>
+        }
 
-        <!-- Save Contact: downloads .vcf → phone offers to save to Contacts with name & number -->
-        <a class="btn save" href="/Home/DownloadContact">
-            <span class="icon">💾</span> Save to Contacts
-        </a>
+        @if (!string.IsNullOrWhiteSpace(phone) || !string.IsNullOrWhiteSpace(email))
+        {
+            <a class="btn save" href="/download-contact">
+                <span class="icon">💾</span> Save to Contacts
+            </a>
+        }
 
-        <div class="divider"></div>
+        @if (!string.IsNullOrWhiteSpace(github) || !string.IsNullOrWhiteSpace(linkedin) || !string.IsNullOrWhiteSpace(portfolio))
+        {
+            <div class="divider"></div>
+        }
 
-        <a class="btn github" href="https://github.com/MsCereal" target="_blank" rel="noopener">
-            <span class="icon">🐙</span> GitHub
-        </a>
+        @if (!string.IsNullOrWhiteSpace(github))
+        {
+            <a class="btn github" href="@github" target="_blank" rel="noopener">
+                <span class="icon">🐙</span> GitHub
+            </a>
+        }
 
-        <a class="btn linkedin" href="https://www.linkedin.com/in/chelsea-denise-purificacion" target="_blank" rel="noopener">
-            <span class="icon">💼</span> LinkedIn
-        </a>
+        @if (!string.IsNullOrWhiteSpace(linkedin))
+        {
+            <a class="btn linkedin" href="@linkedin" target="_blank" rel="noopener">
+                <span class="icon">💼</span> LinkedIn
+            </a>
+        }
 
-        <a class="btn site" href="https://www.majestyk.com" target="_blank" rel="noopener">
-            <span class="icon">🌐</span> Portfolio
-        </a>
+        @if (!string.IsNullOrWhiteSpace(portfolio))
+        {
+            <a class="btn site" href="@portfolio" target="_blank" rel="noopener">
+                <span class="icon">🌐</span> Portfolio
+            </a>
+        }
+
+        @if (isEmpty && !isOwner)
+        {
+            <div class="divider"></div>
+            <p class="empty-note">This card hasn't been set up yet.</p>
+        }
+
+        <!-- Edit button — only visible to the card owner -->
+        @if (isOwner)
+        {
+            <div class="divider"></div>
+            <a class="btn edit-btn" href="/edit">
+                <span class="icon">✏️</span> Edit My Card
+            </a>
+        }
 
     </div>
 </div>
