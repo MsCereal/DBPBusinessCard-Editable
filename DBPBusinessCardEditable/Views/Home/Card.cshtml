@@ -1,22 +1,13 @@
 ﻿@model DBPBusinessCardEditable.Models.CardProfile
 @{
     Layout = null;
-    string name      = Model.Name;
-    string title     = Model.Title;
-    string org       = Model.Org;
-    string phone     = Model.Phone;
-    string email     = Model.Email;
-    string github    = Model.GitHub;
-    string linkedin  = Model.LinkedIn;
-    string portfolio = Model.Portfolio;
-    string empId     = Model.EmpId;
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>@name – DBP Digital Card</title>
+    <title>@Model.Name – DBP Digital Card</title>
     <link rel="icon" type="image/png" href="/dbp-icon.png" />
     <link rel="stylesheet" href="~/css/card.css" />
 </head>
@@ -25,79 +16,64 @@
 <div class="card-wrapper">
     <div class="card">
 
-        <!-- DBP Logo -->
         <div class="logo-wrap">
             <img src="/dbp-logo.png" alt="DBP Logo" class="logo-img" />
         </div>
 
-        <h1>@name</h1>
+        <h1>@Model.Name</h1>
 
-        @if (!string.IsNullOrWhiteSpace(title))
+        @if (!string.IsNullOrWhiteSpace(Model.Title))
         {
-            <p class="title">@title</p>
+            <p class="title">@Model.Title</p>
         }
-        @if (!string.IsNullOrWhiteSpace(org))
+        @if (!string.IsNullOrWhiteSpace(Model.Org))
         {
-            <p class="org">@org</p>
+            <p class="org">@Model.Org</p>
         }
 
         <div class="divider"></div>
 
-        @if (!string.IsNullOrWhiteSpace(phone))
+        @if (!string.IsNullOrWhiteSpace(Model.Phone))
         {
-            <a class="btn call" href="tel:@phone">
+            <a class="btn call" href="tel:@Model.Phone">
                 <span class="icon">📞</span> Call
             </a>
         }
-        @if (!string.IsNullOrWhiteSpace(email))
+        @if (!string.IsNullOrWhiteSpace(Model.Email))
         {
-            <a class="btn email" href="mailto:@email">
+            <a class="btn email" href="mailto:@Model.Email">
                 <span class="icon">✉️</span> Email
             </a>
         }
-        @if (!string.IsNullOrWhiteSpace(phone) || !string.IsNullOrWhiteSpace(email))
+        @if (!string.IsNullOrWhiteSpace(Model.Phone) || !string.IsNullOrWhiteSpace(Model.Email))
         {
-            <a class="btn save" href="/download-contact/@empId">
+            <a class="btn save" href="/download-contact/@Model.EmpId">
                 <span class="icon">💾</span> Save to Contacts
             </a>
         }
 
-        @if (!string.IsNullOrWhiteSpace(github) || !string.IsNullOrWhiteSpace(linkedin) || !string.IsNullOrWhiteSpace(portfolio))
+        @if (!string.IsNullOrWhiteSpace(Model.GitHub) || !string.IsNullOrWhiteSpace(Model.LinkedIn) || !string.IsNullOrWhiteSpace(Model.Portfolio))
         {
             <div class="divider"></div>
         }
-        @if (!string.IsNullOrWhiteSpace(github))
+        @if (!string.IsNullOrWhiteSpace(Model.GitHub))
         {
-            <a class="btn github" href="@github" target="_blank" rel="noopener">
+            <a class="btn github" href="@Model.GitHub" target="_blank" rel="noopener">
                 <span class="icon">🐙</span> GitHub
             </a>
         }
-        @if (!string.IsNullOrWhiteSpace(linkedin))
+        @if (!string.IsNullOrWhiteSpace(Model.LinkedIn))
         {
-            <a class="btn linkedin" href="@linkedin" target="_blank" rel="noopener">
+            <a class="btn linkedin" href="@Model.LinkedIn" target="_blank" rel="noopener">
                 <span class="icon">💼</span> LinkedIn
             </a>
         }
-        @if (!string.IsNullOrWhiteSpace(portfolio))
+        @if (!string.IsNullOrWhiteSpace(Model.Portfolio))
         {
-            <a class="btn site" href="@portfolio" target="_blank" rel="noopener">
+            <a class="btn site" href="@Model.Portfolio" target="_blank" rel="noopener">
                 <span class="icon">🌐</span> Portfolio
             </a>
         }
-
-        <!-- QR Code section — unique to this employee -->
-        <div class="divider"></div>
-        <p class="qr-label">MY QR CODE</p>
-        <div class="qr-box">
-            <img src="/QR/Generate/@empId" alt="QR Code for @name" class="qr-img" />
-        </div>
-        <p class="qr-hint">Scan to view this digital business card</p>
-
-        <!-- Edit button -->
-        <div class="divider"></div>
-        <a class="btn edit-btn" href="/edit/@empId">
-            <span class="icon">✏️</span> Edit My Card
-        </a>
 
     </div>
 </div>

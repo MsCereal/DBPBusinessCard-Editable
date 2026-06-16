@@ -15,13 +15,33 @@ namespace DBPBusinessCardEditable.Controllers
             _profileService = profileService;
         }
 
-        // GET /  — landing: show the edit/setup form
-        public IActionResult Index()
+        // GET /  — entrance: dark QR screen (employee's own QR page)
+        // Requires empId query param or redirects to setup
+        public IActionResult Index(string empId)
         {
+            if (string.IsNullOrWhiteSpace(empId))
+                return RedirectToAction("Setup");
+
+            var profile = _profileService.Get(empId);
+            if (profile == null)
+                return RedirectToAction("Setup");
+
+            return View("QREntrance", profile);
+        }
+
+        // GET /setup  — first-time setup or edit form
+        [HttpGet("/setup")]
+        public IActionResult Setup(string empId)
+        {
+            if (!string.IsNullOrWhiteSpace(empId))
+            {
+                var existing = _profileService.GetOrCreate(empId);
+                return View("Edit", existing);
+            }
             return View("Edit", new CardProfile());
         }
 
-        // GET /card/{empId}  — public card link (what the QR code points to)
+        // GET /card/{empId}  — PUBLIC card (what QR scans to) — no edit button
         [HttpGet("/card/{empId}")]
         public IActionResult ViewCard(string empId)
         {
@@ -31,15 +51,7 @@ namespace DBPBusinessCardEditable.Controllers
             return View("Card", profile);
         }
 
-        // GET /edit/{empId}  — edit an existing card by empId
-        [HttpGet("/edit/{empId}")]
-        public IActionResult Edit(string empId)
-        {
-            var profile = _profileService.GetOrCreate(empId);
-            return View("Edit", profile);
-        }
-
-        // POST /save  — save/create the card
+        // POST /save  — save the card, redirect to QR entrance
         [HttpPost("/save")]
         [ValidateAntiForgeryToken]
         public IActionResult Save(CardProfile model)
@@ -49,22 +61,27 @@ namespace DBPBusinessCardEditable.Controllers
                 TempData["Error"] = "Employee ID is required.";
                 return View("Edit", model);
             }
-
+            if (string.IsNullOrWhiteSpace(model.Name))
+            {
+                TempData["Error"] = "Full Name is required.";
+                return View("Edit", model);
+            }
             _profileService.Save(model);
-            // Redirect to the card page so they see the result + QR
-            return RedirectToAction(nameof(ViewCard), new { empId = model.EmpId.Trim() });
+            // After saving, show the QR entrance for this employee
+            return RedirectToAction("Index", new { empId = model.EmpId.Trim() });
         }
 
-        // POST /reset/{empId}  — reset the card back to blank
+        // POST /reset/{empId}  — reset card, go back to edit form
         [HttpPost("/reset/{empId}")]
         [ValidateAntiForgeryToken]
         public IActionResult Reset(string empId)
         {
             _profileService.Reset(empId);
-            return RedirectToAction(nameof(Edit), new { empId });
+            TempData["Reset"] = true;
+            return RedirectToAction("Setup", new { empId });
         }
 
-        // GET /download-contact/{empId}  — VCF download
+        // GET /download-contact/{empId}  — VCF download for Save to Contacts
         [HttpGet("/download-contact/{empId}")]
         public IActionResult DownloadContact(string empId)
         {

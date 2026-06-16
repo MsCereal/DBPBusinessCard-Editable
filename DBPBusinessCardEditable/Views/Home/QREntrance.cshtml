@@ -1,0 +1,224 @@
+@model DBPBusinessCardEditable.Models.CardProfile
+@{
+    Layout = null;
+    string empId   = Model.EmpId;
+    string cardUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/card/{empId}";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DBP – Digital Business Card</title>
+    <link rel="icon" type="image/png" href="/dbp-icon.png" />
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px 50px;
+            overflow: hidden;
+            background: #0f172a;
+            position: relative;
+        }
+
+        /* Animated blobs */
+        .bg-blobs { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.45;
+            animation: floatBlob linear infinite;
+        }
+        .blob-1 { width:420px; height:420px; background:#2563eb; top:-100px; left:-100px; animation-duration:18s; }
+        .blob-2 { width:340px; height:340px; background:#dc2626; bottom:-80px; right:-80px; animation-duration:22s; animation-delay:-6s; }
+        .blob-3 { width:260px; height:260px; background:#1d4ed8; top:40%; left:60%; animation-duration:15s; animation-delay:-3s; }
+        .blob-4 { width:200px; height:200px; background:#b91c1c; top:20%; right:10%; animation-duration:20s; animation-delay:-10s; }
+
+        @@keyframes floatBlob {
+            0%   { transform: translate(0,0) scale(1); }
+            25%  { transform: translate(40px,-30px) scale(1.08); }
+            50%  { transform: translate(20px,50px) scale(0.95); }
+            75%  { transform: translate(-30px,20px) scale(1.05); }
+            100% { transform: translate(0,0) scale(1); }
+        }
+
+        /* Content */
+        .qr-wrap { position: relative; z-index: 1; text-align: center; width: 100%; max-width: 360px; }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .brand img { height: 48px; object-fit: contain; }
+        .brand-text { color: #f9fafb; font-size: 17px; font-weight: bold; letter-spacing: 0.5px; }
+
+        .emp-name {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .qr-frame {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            display: inline-block;
+            box-shadow: 0 0 0 5px rgba(255,255,255,0.15), 0 20px 60px rgba(0,0,0,0.5);
+            margin-bottom: 24px;
+            animation: qrPulse 3s ease-in-out infinite;
+        }
+        @@keyframes qrPulse {
+            0%,100% { box-shadow: 0 0 0 5px rgba(255,255,255,0.15), 0 20px 60px rgba(0,0,0,0.5); }
+            50%     { box-shadow: 0 0 0 10px rgba(37,99,235,0.3), 0 24px 70px rgba(0,0,0,0.6); }
+        }
+        .qr-frame img { display: block; width: 250px; height: 250px; border-radius: 8px; }
+
+        .instruction { color: #94a3b8; font-size: 12px; letter-spacing: 1.5px; }
+        .instruction strong { color: #cbd5e1; font-size: 12px; letter-spacing: 2px; }
+
+        .or-divider {
+            display: flex; align-items: center; gap: 10px;
+            margin: 14px auto; max-width: 300px;
+        }
+        .or-divider::before, .or-divider::after {
+            content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.12);
+        }
+        .or-text { color: #475569; font-size: 11px; letter-spacing: 2px; white-space: nowrap; }
+
+        .copy-label { color: #64748b; font-size: 11px; letter-spacing: 1.5px; margin-bottom: 10px; }
+
+        .copy-section {
+            display: flex; align-items: center; gap: 8px;
+            max-width: 340px; margin: 6px auto 0;
+        }
+        .copy-link-box {
+            flex: 1;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: #60a5fa;
+            font-size: 12px;
+            word-break: break-all;
+            text-align: left;
+            min-width: 0;
+        }
+        .copy-btn {
+            background: #2563eb; color: white; border: none;
+            border-radius: 10px; padding: 10px 16px;
+            font-size: 13px; font-weight: bold; cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .copy-btn:hover { background: #1d4ed8; }
+        .copy-btn:active { transform: scale(0.97); }
+        .copy-btn.copied { background: #16a34a; }
+
+        /* Owner action buttons */
+        .action-row {
+            display: flex; gap: 10px;
+            max-width: 340px; margin: 20px auto 0;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 11px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            text-align: center;
+            color: #fff;
+            transition: transform 0.12s, opacity 0.12s;
+        }
+        .action-btn:active { transform: scale(0.97); opacity: 0.9; }
+        .btn-edit  { background: #7c3aed; }
+        .btn-reset { background: rgba(220,38,38,0.7); border: 1px solid rgba(220,38,38,0.5); }
+    </style>
+</head>
+<body>
+
+<div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+</div>
+
+<div class="qr-wrap">
+    <div class="brand">
+        <img src="/dbp-logo.png" alt="DBP" />
+        <span class="brand-text">Digital Business Card</span>
+    </div>
+    <p class="emp-name">@Model.Name &nbsp;·&nbsp; @Model.EmpId</p>
+
+    <div class="qr-frame">
+        <img src="/QR/Generate/@empId" alt="QR Code" />
+    </div>
+
+    <p class="instruction"><strong>SCAN THE QR CODE</strong></p>
+
+    <div class="or-divider"><span class="or-text">OR</span></div>
+
+    <p class="copy-label">COPY THE LINK</p>
+    <div class="copy-section">
+        <div class="copy-link-box" id="linkDisplay">@cardUrl</div>
+        <button class="copy-btn" id="copyBtn" onclick="copyLink()">📋 Copy Link</button>
+    </div>
+
+    <!-- Owner controls -->
+    <div class="action-row">
+        <a href="/setup?empId=@empId" class="action-btn btn-edit">✏️ Edit Card</a>
+        <form method="post" action="/reset/@empId" style="flex:1;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="action-btn btn-reset" style="width:100%;"
+                    onclick="return confirm('Reset all card info? This cannot be undone.')">
+                🔄 Reset
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    var cardUrl = '@cardUrl';
+
+    function copyLink() {
+        navigator.clipboard.writeText(cardUrl).then(function () {
+            var btn = document.getElementById('copyBtn');
+            btn.textContent = '✅ Copied!';
+            btn.classList.add('copied');
+            setTimeout(function () {
+                btn.textContent = '📋 Copy Link';
+                btn.classList.remove('copied');
+            }, 2000);
+        }).catch(function () {
+            var el = document.createElement('textarea');
+            el.value = cardUrl;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            var btn = document.getElementById('copyBtn');
+            btn.textContent = '✅ Copied!';
+            btn.classList.add('copied');
+            setTimeout(function () {
+                btn.textContent = '📋 Copy Link';
+                btn.classList.remove('copied');
+            }, 2000);
+        });
+    }
+</script>
+
+</body>
+</html>
