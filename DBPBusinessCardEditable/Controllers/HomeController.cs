@@ -1,4 +1,4 @@
-﻿using DBPBusinessQR.Models;
+﻿using DBPBusinessCardEditable.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 
-namespace DBPBusinessQR.Controllers
+namespace DBPBusinessCardEditable.Controllers
 {
     public class HomeController : Controller
     {

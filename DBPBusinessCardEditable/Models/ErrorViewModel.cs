@@ -1,6 +1,6 @@
 using System;
 
-namespace DBPBusinessQR.Models
+namespace DBPBusinessCardEditable.Models
 {
     public class ErrorViewModel
     {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using QRCoder;
 using SkiaSharp;
 
-namespace DBPBusinessQR.Controllers
+namespace DBPBusinessCardEditable.Controllers
 {
     public class QRController : Controller
     {

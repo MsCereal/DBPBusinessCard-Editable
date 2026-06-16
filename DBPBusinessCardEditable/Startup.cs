@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DBPBusinessQR
+namespace DBPBusinessCardEditable
 {
     public class Startup
     {
