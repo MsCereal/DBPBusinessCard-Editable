@@ -1,14 +1,14 @@
 @model DBPBusinessCardEditable.Models.CardProfile
 @{
-    ViewData["Title"] = "Edit My Card";
     Layout = null;
+    bool isExisting = !string.IsNullOrWhiteSpace(Model?.EmpId);
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Edit My Card – DBP</title>
+    <title>DBP – Digital Business Card Setup</title>
     <link rel="icon" type="image/png" href="/dbp-icon.png" />
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -20,17 +20,13 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 30px 16px 50px;
+            padding: 30px 16px 60px;
         }
 
-        .edit-wrapper {
-            width: 100%;
-            max-width: 420px;
-            margin: 0 auto;
-        }
+        .wrap { width: 100%; max-width: 440px; margin: 0 auto; }
 
-        .edit-card {
-            background: #ffffff;
+        .card {
+            background: #fff;
             border-radius: 20px;
             padding: 30px 24px 28px;
             border-top: 6px solid #2563eb;
@@ -38,84 +34,68 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        .logo-wrap {
-            text-align: center;
-            margin-bottom: 16px;
+        .logo-wrap { text-align: center; margin-bottom: 14px; }
+        .logo-wrap img { width: 68px; height: 68px; object-fit: contain; }
+
+        h1 { text-align: center; color: #111827; font-size: 20px; margin-bottom: 4px; }
+        .sub { text-align: center; color: #6b7280; font-size: 12px; margin-bottom: 20px; }
+
+        .divider { height: 1px; background: #e5e7eb; margin: 16px 0; }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #9ca3af;
+            margin-bottom: 10px;
         }
 
-        .logo-img {
-            width: 72px;
-            height: 72px;
-            object-fit: contain;
-            border-radius: 50%;
-        }
-
-        h1 {
-            text-align: center;
-            color: #111827;
-            font-size: 20px;
-            margin-bottom: 6px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #6b7280;
-            font-size: 13px;
-            margin-bottom: 20px;
-        }
-
-        .divider {
-            height: 1px;
-            background: #e5e7eb;
-            margin: 18px 0;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
+        .form-group { margin-bottom: 12px; }
 
         label {
             display: block;
-            color: #374151;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
-            letter-spacing: 0.5px;
+            color: #374151;
+            letter-spacing: 0.4px;
             text-transform: uppercase;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        input[type="url"] {
+        input {
             width: 100%;
             padding: 11px 14px;
-            border: 1px solid #d1d5db;
+            border: 1.5px solid #d1d5db;
             border-radius: 10px;
             font-size: 14px;
             color: #111827;
             background: #f9fafb;
             outline: none;
-            transition: border-color 0.15s;
+            transition: border-color 0.15s, background 0.15s;
         }
 
-        input:focus {
+        input:focus { border-color: #2563eb; background: #fff; }
+
+        input.empid-input {
             border-color: #2563eb;
-            background: #fff;
+            font-weight: bold;
+            font-size: 15px;
+            letter-spacing: 0.5px;
         }
 
-        .btn-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
+        input[readonly] {
+            background: #eff6ff;
+            color: #1d4ed8;
+            cursor: default;
         }
 
         .btn {
-            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            width: 100%;
             padding: 13px 16px;
             border-radius: 12px;
             font-size: 15px;
@@ -123,120 +103,152 @@
             cursor: pointer;
             border: none;
             text-decoration: none;
-            transition: transform 0.15s, opacity 0.15s;
             color: #fff;
+            transition: transform 0.12s, opacity 0.12s;
+            margin-bottom: 10px;
         }
-
         .btn:active { transform: scale(0.97); opacity: 0.9; }
-
-        .btn-save  { background: #2563eb; }
-        .btn-reset { background: #dc2626; }
-        .btn-view  { background: #16a34a; color: #fff; text-align: center; display: block; }
+        .btn-save   { background: #2563eb; }
+        .btn-reset  { background: #dc2626; }
+        .btn-card   { background: #16a34a; }
 
         .alert {
-            padding: 12px 16px;
+            padding: 11px 14px;
             border-radius: 10px;
             font-size: 13px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             text-align: center;
             font-weight: bold;
         }
-
         .alert-success { background: #dcfce7; color: #15803d; }
-        .alert-info    { background: #dbeafe; color: #1d4ed8; }
+        .alert-error   { background: #fee2e2; color: #dc2626; }
+
+        .hint { font-size: 11px; color: #9ca3af; margin-top: 4px; }
     </style>
 </head>
 <body>
-<div class="edit-wrapper">
-    <div class="edit-card">
+<div class="wrap">
+<div class="card">
 
-        <div class="logo-wrap">
-            <img src="/dbp-logo.png" alt="DBP Logo" class="logo-img" />
+    <div class="logo-wrap">
+        <img src="/dbp-logo.png" alt="DBP" />
+    </div>
+
+    <h1>Digital Business Card</h1>
+    <p class="sub">Fill in your details to create your personal QR card.</p>
+
+    <div class="divider"></div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-error">⚠️ @TempData["Error"]</div>
+    }
+
+    <form method="post" action="/save">
+        @Html.AntiForgeryToken()
+
+        <!-- EMPLOYEE ID — the permanent unique key -->
+        <p class="section-label">Identity</p>
+
+        <div class="form-group">
+            <label>Employee ID *</label>
+            @if (isExisting)
+            {
+                <!-- Lock EmpId once card exists — it's the permanent key -->
+                <input type="text" value="@Model.EmpId" readonly class="empid-input" />
+                <input type="hidden" name="EmpId" value="@Model.EmpId" />
+                <p class="hint">Your Employee ID is permanent and cannot be changed.</p>
+            }
+            else
+            {
+                <input type="text" name="EmpId" value="" placeholder="e.g. DBP-00123"
+                       class="empid-input" maxlength="30" required />
+                <p class="hint">This will be the unique ID for your QR code.</p>
+            }
         </div>
 
-        <h1>Edit My Card</h1>
-        <p class="subtitle">Fill in your details — your QR will link directly to this card.</p>
+        <div class="divider"></div>
+
+        <!-- PERSONAL INFO -->
+        <p class="section-label">Personal Info</p>
+
+        <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" name="Name" value="@Model.Name"
+                   placeholder="e.g. Chelsea De Purificacion" maxlength="80" required />
+        </div>
+
+        <div class="form-group">
+            <label>Job Title</label>
+            <input type="text" name="Title" value="@Model.Title"
+                   placeholder="e.g. Software Engineer" maxlength="100" />
+        </div>
+
+        <div class="form-group">
+            <label>Organisation</label>
+            <input type="text" name="Org" value="@Model.Org"
+                   placeholder="e.g. Development Bank of the Philippines" maxlength="120" />
+        </div>
 
         <div class="divider"></div>
 
-        @if (TempData["Saved"] != null)
-        {
-            <div class="alert alert-success">✅ Card saved successfully!</div>
-        }
-        @if (TempData["Reset"] != null)
-        {
-            <div class="alert alert-info">🔄 Card has been reset.</div>
-        }
+        <!-- CONTACT -->
+        <p class="section-label">Contact</p>
 
-        <form method="post" action="/edit">
-            @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" name="Phone" value="@Model.Phone"
+                   placeholder="e.g. +639614475634" maxlength="30" />
+        </div>
 
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" name="Name" value="@Model.Name" placeholder="e.g. Chelsea De Purificacion" maxlength="80" />
-            </div>
-
-            <div class="form-group">
-                <label>Job Title</label>
-                <input type="text" name="Title" value="@Model.Title" placeholder="e.g. Software Engineer" maxlength="100" />
-            </div>
-
-            <div class="form-group">
-                <label>Organisation</label>
-                <input type="text" name="Org" value="@Model.Org" placeholder="e.g. Development Bank of the Philippines" maxlength="120" />
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="form-group">
-                <label>Phone Number</label>
-                <input type="tel" name="Phone" value="@Model.Phone" placeholder="e.g. +639614475634" maxlength="30" />
-            </div>
-
-            <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" name="Email" value="@Model.Email" placeholder="e.g. you@dbp.ph" maxlength="120" />
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="form-group">
-                <label>GitHub URL</label>
-                <input type="url" name="GitHub" value="@Model.GitHub" placeholder="https://github.com/username" maxlength="200" />
-            </div>
-
-            <div class="form-group">
-                <label>LinkedIn URL</label>
-                <input type="url" name="LinkedIn" value="@Model.LinkedIn" placeholder="https://linkedin.com/in/username" maxlength="200" />
-            </div>
-
-            <div class="form-group">
-                <label>Portfolio / Website</label>
-                <input type="url" name="Portfolio" value="@Model.Portfolio" placeholder="https://yoursite.com" maxlength="200" />
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="btn-row">
-                <button type="submit" class="btn btn-save">💾 Save</button>
-            </div>
-        </form>
-
-        <form method="post" action="/reset" style="margin-top: 10px;">
-            @Html.AntiForgeryToken()
-            <div class="btn-row">
-                <button type="submit" class="btn btn-reset"
-                        onclick="return confirm('Reset all fields? This cannot be undone.')">
-                    🔄 Reset
-                </button>
-            </div>
-        </form>
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" name="Email" value="@Model.Email"
+                   placeholder="e.g. you@dbp.ph" maxlength="120" />
+        </div>
 
         <div class="divider"></div>
 
-        <a href="/my-card" class="btn btn-view">👁️ Preview My Card</a>
+        <!-- LINKS -->
+        <p class="section-label">Links (Optional)</p>
 
-    </div>
+        <div class="form-group">
+            <label>GitHub</label>
+            <input type="url" name="GitHub" value="@Model.GitHub"
+                   placeholder="https://github.com/username" maxlength="200" />
+        </div>
+
+        <div class="form-group">
+            <label>LinkedIn</label>
+            <input type="url" name="LinkedIn" value="@Model.LinkedIn"
+                   placeholder="https://linkedin.com/in/username" maxlength="200" />
+        </div>
+
+        <div class="form-group">
+            <label>Portfolio / Website</label>
+            <input type="url" name="Portfolio" value="@Model.Portfolio"
+                   placeholder="https://yoursite.com" maxlength="200" />
+        </div>
+
+        <div class="divider"></div>
+
+        <button type="submit" class="btn btn-save">💾 Save &amp; Generate QR</button>
+    </form>
+
+    @if (isExisting)
+    {
+        <a href="/card/@Model.EmpId" class="btn btn-card">👁️ View My Card &amp; QR</a>
+
+        <form method="post" action="/reset/@Model.EmpId">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-reset"
+                    onclick="return confirm('Reset all fields? This cannot be undone.')">
+                🔄 Reset My Card
+            </button>
+        </form>
+    }
+
+</div>
 </div>
 </body>
 </html>

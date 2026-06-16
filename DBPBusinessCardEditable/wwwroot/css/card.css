@@ -107,13 +107,46 @@ h1 {
 }
 
 /* Button colors */
-.call     { background: #dc2626; }   /* red  */
-.email    { background: #2563eb; }   /* blue */
-.save     { background: #16a34a; }   /* green */
-.github   { background: #111827; }   /* dark */
-.linkedin { background: #1d4ed8; }   /* blue */
-.site     { background: #ef4444; }   /* red  */
-.edit-btn { background: #7c3aed; }   /* purple — owner only */
+.call     { background: #dc2626; }
+.email    { background: #2563eb; }
+.save     { background: #16a34a; }
+.github   { background: #111827; }
+.linkedin { background: #1d4ed8; }
+.site     { background: #ef4444; }
+.edit-btn { background: #7c3aed; }
+
+/* ---- QR Code section ---- */
+.qr-label {
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.qr-box {
+    display: inline-block;
+    background: #fff;
+    border: 2px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 10px;
+}
+
+.qr-img {
+    display: block;
+    width: 180px;
+    height: 180px;
+    border-radius: 6px;
+}
+
+.qr-hint {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-bottom: 0;
+}
 
 .empty-note {
     color: #9ca3af;

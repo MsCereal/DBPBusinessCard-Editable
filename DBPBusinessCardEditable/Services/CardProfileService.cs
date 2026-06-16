@@ -5,33 +5,35 @@ using System.Collections.Concurrent;
 namespace DBPBusinessCardEditable.Services
 {
     /// <summary>
-    /// In-memory store keyed by userId. Each user gets their own permanent card profile.
+    /// In-memory store keyed by Employee ID.
+    /// Each employee's card is permanent and unique.
     /// </summary>
     public class CardProfileService
     {
         private readonly ConcurrentDictionary<string, CardProfile> _store
             = new ConcurrentDictionary<string, CardProfile>(StringComparer.OrdinalIgnoreCase);
 
-        public CardProfile GetOrCreate(string userId)
+        public CardProfile Get(string empId)
         {
-            return _store.GetOrAdd(userId, id => new CardProfile { UserId = id });
+            _store.TryGetValue(empId.Trim(), out var profile);
+            return profile;
         }
 
-        public CardProfile Get(string userId)
+        public CardProfile GetOrCreate(string empId)
         {
-            _store.TryGetValue(userId, out var profile);
-            return profile;
+            return _store.GetOrAdd(empId.Trim(), id => new CardProfile { EmpId = id });
         }
 
         public void Save(CardProfile profile)
         {
+            profile.EmpId = profile.EmpId.Trim();
             profile.LastUpdated = DateTime.UtcNow;
-            _store[profile.UserId] = profile;
+            _store[profile.EmpId] = profile;
         }
 
-        public void Reset(string userId)
+        public void Reset(string empId)
         {
-            _store[userId] = new CardProfile { UserId = userId };
+            _store[empId.Trim()] = new CardProfile { EmpId = empId.Trim() };
         }
     }
 }

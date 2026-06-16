@@ -44,10 +44,10 @@ namespace DBPBusinessCardEditable
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers(); // supports [HttpGet("/card/{userId}")] etc.
+                endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=QR}/{action=Show}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

@@ -1,6 +1,5 @@
 ﻿using DBPBusinessCardEditable.Models;
 using DBPBusinessCardEditable.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Diagnostics;
@@ -10,70 +9,67 @@ namespace DBPBusinessCardEditable.Controllers
     public class HomeController : Controller
     {
         private readonly CardProfileService _profileService;
-        private const string CookieName = "dbp_user_id";
 
         public HomeController(CardProfileService profileService)
         {
             _profileService = profileService;
         }
 
-        // GET /my-card  — owner views their own card
-        [HttpGet("/my-card")]
+        // GET /  — landing: show the edit/setup form
         public IActionResult Index()
         {
-            string userId = GetOrCreateUserId();
-            var profile = _profileService.GetOrCreate(userId);
-            return View("Card", profile);
+            return View("Edit", new CardProfile());
         }
 
-        // GET /card/{userId}  — direct link via QR code, view someone else's card
-        [HttpGet("/card/{userId}")]
-        public IActionResult ViewCard(string userId)
+        // GET /card/{empId}  — public card link (what the QR code points to)
+        [HttpGet("/card/{empId}")]
+        public IActionResult ViewCard(string empId)
         {
-            var profile = _profileService.Get(userId);
+            var profile = _profileService.Get(empId);
             if (profile == null)
-                profile = new CardProfile { UserId = userId };
+                return View("NotFound");
             return View("Card", profile);
         }
 
-        // GET /edit  — show the edit form for the current user
-        [HttpGet("/edit")]
-        public IActionResult Edit()
+        // GET /edit/{empId}  — edit an existing card by empId
+        [HttpGet("/edit/{empId}")]
+        public IActionResult Edit(string empId)
         {
-            string userId = GetOrCreateUserId();
-            var profile = _profileService.GetOrCreate(userId);
-            return View(profile);
+            var profile = _profileService.GetOrCreate(empId);
+            return View("Edit", profile);
         }
 
-        // POST /edit  — save the filled-in profile
-        [HttpPost("/edit")]
+        // POST /save  — save/create the card
+        [HttpPost("/save")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(CardProfile model)
+        public IActionResult Save(CardProfile model)
         {
-            string userId = GetOrCreateUserId();
-            model.UserId = userId;
+            if (string.IsNullOrWhiteSpace(model.EmpId))
+            {
+                TempData["Error"] = "Employee ID is required.";
+                return View("Edit", model);
+            }
+
             _profileService.Save(model);
-            TempData["Saved"] = true;
-            return RedirectToAction(nameof(Edit));
+            // Redirect to the card page so they see the result + QR
+            return RedirectToAction(nameof(ViewCard), new { empId = model.EmpId.Trim() });
         }
 
-        // POST /reset  — clear the profile back to blank
-        [HttpPost("/reset")]
+        // POST /reset/{empId}  — reset the card back to blank
+        [HttpPost("/reset/{empId}")]
         [ValidateAntiForgeryToken]
-        public IActionResult Reset()
+        public IActionResult Reset(string empId)
         {
-            string userId = GetOrCreateUserId();
-            _profileService.Reset(userId);
-            TempData["Reset"] = true;
-            return RedirectToAction(nameof(Edit));
+            _profileService.Reset(empId);
+            return RedirectToAction(nameof(Edit), new { empId });
         }
 
-        // GET /download-contact  — dynamic VCF from current user's profile
-        [HttpGet("/download-contact")]
-        public IActionResult DownloadContact()
+        // GET /download-contact/{empId}  — VCF download
+        [HttpGet("/download-contact/{empId}")]
+        public IActionResult DownloadContact(string empId)
         {
-            string userId = GetOrCreateUserId();
-            var p = _profileService.GetOrCreate(userId);
+            var p = _profileService.Get(empId);
+            if (p == null) return NotFound();
 
             string vcf =
                 "BEGIN:VCARD\r\n" +
@@ -87,17 +83,10 @@ namespace DBPBusinessCardEditable.Controllers
                 "END:VCARD\r\n";
 
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(vcf);
-            string filename = string.IsNullOrWhiteSpace(p.Name) ? "contact.vcf" : $"{p.Name.Replace(" ", "-")}-DBP.vcf";
+            string filename = string.IsNullOrWhiteSpace(p.Name)
+                ? $"{empId}-DBP.vcf"
+                : $"{p.Name.Replace(" ", "-")}-DBP.vcf";
             return File(bytes, "text/vcard", filename);
-        }
-
-        // GET /Home/Index  — old QR code link, show the owner's card directly
-        [HttpGet("/Home/Index")]
-        public IActionResult HomeIndex()
-        {
-            string userId = GetOrCreateUserId();
-            var profile = _profileService.GetOrCreate(userId);
-            return View("Card", profile);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -107,22 +96,6 @@ namespace DBPBusinessCardEditable.Controllers
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             });
-        }
-
-        // ── Helpers ─────────────────────────────────────────────
-        private string GetOrCreateUserId()
-        {
-            if (Request.Cookies.TryGetValue(CookieName, out string existing) && !string.IsNullOrWhiteSpace(existing))
-                return existing;
-
-            string newId = Guid.NewGuid().ToString("N");
-            Response.Cookies.Append(CookieName, newId, new CookieOptions
-            {
-                Expires = DateTimeOffset.UtcNow.AddYears(10),
-                IsEssential = true,
-                SameSite = SameSiteMode.Lax
-            });
-            return newId;
         }
     }
 }

@@ -1,22 +1,15 @@
 ﻿@model DBPBusinessCardEditable.Models.CardProfile
 @{
-    ViewData["Title"] = "Digital Card";
     Layout = null;
-
-    bool isEmpty = string.IsNullOrWhiteSpace(Model?.Name);
-
-    string name      = isEmpty ? "Your Name" : Model.Name;
-    string title     = isEmpty ? "Your Title" : Model.Title;
-    string org       = isEmpty ? "Your Organisation" : Model.Org;
-    string phone     = Model?.Phone ?? "";
-    string email     = Model?.Email ?? "";
-    string github    = Model?.GitHub ?? "";
-    string linkedin  = Model?.LinkedIn ?? "";
-    string portfolio = Model?.Portfolio ?? "";
-
-    // Is the viewer the owner? (owns the cookie = same userId)
-    bool isOwner = Context.Request.Cookies.TryGetValue("dbp_user_id", out string cookieId)
-                   && cookieId == Model?.UserId;
+    string name      = Model.Name;
+    string title     = Model.Title;
+    string org       = Model.Org;
+    string phone     = Model.Phone;
+    string email     = Model.Email;
+    string github    = Model.GitHub;
+    string linkedin  = Model.LinkedIn;
+    string portfolio = Model.Portfolio;
+    string empId     = Model.EmpId;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -38,6 +31,7 @@
         </div>
 
         <h1>@name</h1>
+
         @if (!string.IsNullOrWhiteSpace(title))
         {
             <p class="title">@title</p>
@@ -55,17 +49,15 @@
                 <span class="icon">📞</span> Call
             </a>
         }
-
         @if (!string.IsNullOrWhiteSpace(email))
         {
             <a class="btn email" href="mailto:@email">
                 <span class="icon">✉️</span> Email
             </a>
         }
-
         @if (!string.IsNullOrWhiteSpace(phone) || !string.IsNullOrWhiteSpace(email))
         {
-            <a class="btn save" href="/download-contact">
+            <a class="btn save" href="/download-contact/@empId">
                 <span class="icon">💾</span> Save to Contacts
             </a>
         }
@@ -74,21 +66,18 @@
         {
             <div class="divider"></div>
         }
-
         @if (!string.IsNullOrWhiteSpace(github))
         {
             <a class="btn github" href="@github" target="_blank" rel="noopener">
                 <span class="icon">🐙</span> GitHub
             </a>
         }
-
         @if (!string.IsNullOrWhiteSpace(linkedin))
         {
             <a class="btn linkedin" href="@linkedin" target="_blank" rel="noopener">
                 <span class="icon">💼</span> LinkedIn
             </a>
         }
-
         @if (!string.IsNullOrWhiteSpace(portfolio))
         {
             <a class="btn site" href="@portfolio" target="_blank" rel="noopener">
@@ -96,20 +85,19 @@
             </a>
         }
 
-        @if (isEmpty && !isOwner)
-        {
-            <div class="divider"></div>
-            <p class="empty-note">This card hasn't been set up yet.</p>
-        }
+        <!-- QR Code section — unique to this employee -->
+        <div class="divider"></div>
+        <p class="qr-label">MY QR CODE</p>
+        <div class="qr-box">
+            <img src="/QR/Generate/@empId" alt="QR Code for @name" class="qr-img" />
+        </div>
+        <p class="qr-hint">Scan to view this digital business card</p>
 
-        <!-- Edit button — only visible to the card owner -->
-        @if (isOwner)
-        {
-            <div class="divider"></div>
-            <a class="btn edit-btn" href="/edit">
-                <span class="icon">✏️</span> Edit My Card
-            </a>
-        }
+        <!-- Edit button -->
+        <div class="divider"></div>
+        <a class="btn edit-btn" href="/edit/@empId">
+            <span class="icon">✏️</span> Edit My Card
+        </a>
 
     </div>
 </div>
