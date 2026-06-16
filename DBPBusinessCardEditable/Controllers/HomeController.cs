@@ -17,7 +17,8 @@ namespace DBPBusinessCardEditable.Controllers
             _profileService = profileService;
         }
 
-        // GET /  — QR scan landing: show the user's card (view-only)
+        // GET /my-card  — owner views their own card
+        [HttpGet("/my-card")]
         public IActionResult Index()
         {
             string userId = GetOrCreateUserId();
@@ -90,11 +91,13 @@ namespace DBPBusinessCardEditable.Controllers
             return File(bytes, "text/vcard", filename);
         }
 
-        // GET /Home/Index  — kept for backward compat (QR code points here)
+        // GET /Home/Index  — old QR code link, show the owner's card directly
         [HttpGet("/Home/Index")]
         public IActionResult HomeIndex()
         {
-            return RedirectToAction(nameof(Index));
+            string userId = GetOrCreateUserId();
+            var profile = _profileService.GetOrCreate(userId);
+            return View("Card", profile);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
