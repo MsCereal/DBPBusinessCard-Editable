@@ -7,91 +7,508 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@Model.Name – DBP Digital Card</title>
     <link rel="icon" type="image/png" href="/dbp-icon.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="~/css/card.css" />
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 30px 16px 60px;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Blue gradient background */
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                linear-gradient(155deg,
+                    rgba(10,25,70,0.95) 0%,
+                    rgba(30,64,175,0.90) 45%,
+                    rgba(15,40,100,0.97) 100%),
+                url('/bg.png') center/cover no-repeat;
+        }
+
+        /* ── Flip card container ── */
+        .card-scene {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 400px;
+            /* height set by JS to match card height */
+            perspective: 1000px;
+            margin-bottom: 16px;
+        }
+
+        .card-flipper {
+            width: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+        }
+
+        .card-flipper.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Front and back share base styles */
+        .card-face {
+            width: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            background: #ffffff;
+            border-radius: 20px;
+            border-top: 6px solid #2563eb;
+            border-bottom: 4px solid #dc2626;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .card-front {
+            padding: 28px 22px 24px;
+            text-align: center;
+        }
+
+        .card-back {
+            position: absolute;
+            top: 0; left: 0;
+            padding: 24px 22px;
+            transform: rotateY(180deg);
+            text-align: left;
+        }
+
+        /* Flip hint */
+        .flip-hint {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 11px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .flip-hint i { margin-right: 5px; }
+
+        /* ── FRONT ── */
+        .logo-wrap { text-align: center; margin-bottom: 14px; }
+        .logo-img { width: 72px; height: 72px; object-fit: contain; }
+
+        h1 { color: #111827; font-size: 22px; font-weight: 800; margin-bottom: 5px; }
+        .job-title { color: #374151; font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+        .org { color: #6b7280; font-size: 12px; }
+
+        .divider { height: 1px; background: #e5e7eb; margin: 16px 0; }
+
+        /* Buttons */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 11px 16px;
+            margin: 7px 0;
+            border-radius: 11px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            background: #fff;
+            border: 2px solid;
+            transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.1s;
+            cursor: pointer;
+            width: 100%;
+            letter-spacing: 0.1px;
+        }
+        .btn i { font-size: 15px; width: 17px; text-align: center; flex-shrink: 0; }
+        .btn:active { transform: scale(0.97); }
+
+        .call    { color: #dc2626; border-color: #dc2626; }
+        .call:hover, .call:active    { background: #dc2626; color: #fff; box-shadow: 0 4px 14px rgba(220,38,38,0.3); }
+
+        .email   { color: #2563eb; border-color: #2563eb; }
+        .email:hover, .email:active  { background: #2563eb; color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.3); }
+
+        .save    { color: #0d9488; border-color: #0d9488; }
+        .save:hover, .save:active    { background: #0d9488; color: #fff; box-shadow: 0 4px 14px rgba(13,148,136,0.3); }
+
+        .github  { color: #1f2937; border-color: #1f2937; }
+        .github:hover, .github:active { background: #1f2937; color: #fff; box-shadow: 0 4px 14px rgba(31,41,55,0.3); }
+
+        .linkedin { color: #0a66c2; border-color: #0a66c2; }
+        .linkedin:hover, .linkedin:active { background: #0a66c2; color: #fff; box-shadow: 0 4px 14px rgba(10,102,194,0.3); }
+
+        .site    { color: #4f46e5; border-color: #4f46e5; }
+        .site:hover, .site:active    { background: #4f46e5; color: #fff; box-shadow: 0 4px 14px rgba(79,70,229,0.3); }
+
+        .share   { color: #2563eb; border-color: #2563eb; }
+        .share:hover, .share:active  { background: #2563eb; color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.3); }
+
+        /* ── BACK ── */
+        .back-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .back-header img { width: 38px; height: 38px; object-fit: contain; }
+        .back-header-text strong {
+            display: block;
+            color: #111827;
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .back-header-text span {
+            color: #6b7280;
+            font-size: 11px;
+        }
+
+        .back-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .back-close:hover { color: #374151; }
+
+        .info-hint {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: background 0.15s;
+            border: 1px solid #f3f4f6;
+        }
+        .info-row:hover { background: #f0f7ff; border-color: #bfdbfe; }
+        .info-row:active { background: #dbeafe; }
+
+        .info-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #eff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .info-icon i { font-size: 13px; color: #2563eb; }
+
+        .info-content { flex: 1; min-width: 0; }
+        .info-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .info-value {
+            font-size: 13px;
+            color: #111827;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .copy-tick {
+            font-size: 12px;
+            color: #16a34a;
+            opacity: 0;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+            align-self: center;
+        }
+        .copy-tick.show { opacity: 1; }
+
+        /* Buttons section at bottom of back */
+        .back-actions {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            body { padding: 20px 12px 50px; }
+            h1 { font-size: 20px; }
+            .btn { font-size: 14px; padding: 12px 14px; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- Same blue gradient background as Welcome/Edit -->
 <div class="page-bg"></div>
 
-<div class="card-wrapper">
-    <div class="card">
-
-        <div class="logo-wrap">
-            <img src="/dbp-logo.png" alt="DBP Logo" class="logo-img" />
-        </div>
-
-        <h1>@Model.Name</h1>
-
-        @if (!string.IsNullOrWhiteSpace(Model.Title))
-        {
-            <p class="title">@Model.Title</p>
-        }
-        @if (!string.IsNullOrWhiteSpace(Model.Org))
-        {
-            <p class="org">@Model.Org</p>
-        }
-
-        <div class="divider"></div>
-
-        @if (!string.IsNullOrWhiteSpace(Model.Phone))
-        {
-            <a class="btn call" href="tel:@Model.Phone">
-                <i class="fa-solid fa-phone"></i> Call Now
-            </a>
-        }
-        @if (!string.IsNullOrWhiteSpace(Model.Email))
-        {
-            <a class="btn email" href="mailto:@Model.Email">
-                <i class="fa-solid fa-envelope"></i> Send Email
-            </a>
-        }
-        @if (!string.IsNullOrWhiteSpace(Model.Phone) || !string.IsNullOrWhiteSpace(Model.Email))
-        {
-            <a class="btn save" href="/download-contact/@Model.EmpId">
-                <i class="fa-solid fa-address-card"></i> Save Contact
-            </a>
-        }
-
-        @if (!string.IsNullOrWhiteSpace(Model.GitHub) || !string.IsNullOrWhiteSpace(Model.LinkedIn) || !string.IsNullOrWhiteSpace(Model.Portfolio))
-        {
-            <div class="divider"></div>
-        }
-        @if (!string.IsNullOrWhiteSpace(Model.GitHub))
-        {
-            <a class="btn github" href="@Model.GitHub" target="_blank" rel="noopener">
-                <i class="fa-brands fa-github"></i> View GitHub
-            </a>
-        }
-        @if (!string.IsNullOrWhiteSpace(Model.LinkedIn))
-        {
-            <a class="btn linkedin" href="@Model.LinkedIn" target="_blank" rel="noopener">
-                <i class="fa-brands fa-linkedin"></i> View LinkedIn
-            </a>
-        }
-        @if (!string.IsNullOrWhiteSpace(Model.Portfolio))
-        {
-            <a class="btn site" href="@Model.Portfolio" target="_blank" rel="noopener">
-                <i class="fa-solid fa-globe"></i> Visit Website
-            </a>
-        }
-
-        <!-- Share button — always shown -->
-        <div class="divider"></div>
-        <button class="btn share" onclick="shareCard()" id="shareBtn">
-            <i class="fa-solid fa-share-nodes"></i> Share This Card
-        </button>
-
-    </div>
+<!-- Flip hint -->
+<div class="flip-hint" onclick="flipCard()" id="flipHint" style="position:relative;z-index:1;margin-bottom:10px;margin-top:0;">
+    <i class="fa-solid fa-rotate"></i> Tap card to flip &amp; view details
 </div>
 
+<div class="card-scene" id="cardScene">
+    <div class="card-flipper" id="cardFlipper">
+
+        <!-- ── FRONT ── -->
+        <div class="card-face card-front" id="cardFront" onclick="flipCard()">
+
+            <div class="logo-wrap">
+                <img src="/dbp-logo.png" alt="DBP" class="logo-img" />
+            </div>
+
+            <h1>@Model.Name</h1>
+            @if (!string.IsNullOrWhiteSpace(Model.Title))  { <p class="job-title">@Model.Title</p> }
+            @if (!string.IsNullOrWhiteSpace(Model.Org))    { <p class="org">@Model.Org</p> }
+
+            <div class="divider"></div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Phone))
+            {
+                <a class="btn call" href="tel:@Model.Phone" onclick="event.stopPropagation()">
+                    <i class="fa-solid fa-phone"></i> Call Now
+                </a>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Email))
+            {
+                <a class="btn email" href="mailto:@Model.Email" onclick="event.stopPropagation()">
+                    <i class="fa-solid fa-envelope"></i> Send Email
+                </a>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Phone) || !string.IsNullOrWhiteSpace(Model.Email))
+            {
+                <a class="btn save" href="/download-contact/@Model.EmpId" onclick="event.stopPropagation()">
+                    <i class="fa-solid fa-address-card"></i> Save Contact
+                </a>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.GitHub) || !string.IsNullOrWhiteSpace(Model.LinkedIn) || !string.IsNullOrWhiteSpace(Model.Portfolio))
+            {
+                <div class="divider"></div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.GitHub))
+            {
+                <a class="btn github" href="@Model.GitHub" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+                    <i class="fa-brands fa-github"></i> View GitHub
+                </a>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.LinkedIn))
+            {
+                <a class="btn linkedin" href="@Model.LinkedIn" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+                    <i class="fa-brands fa-linkedin"></i> View LinkedIn
+                </a>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Portfolio))
+            {
+                <a class="btn site" href="@Model.Portfolio" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+                    <i class="fa-solid fa-globe"></i> Visit Website
+                </a>
+            }
+
+            <div class="divider"></div>
+            <button class="btn share" onclick="shareCard(); event.stopPropagation();" id="shareBtn">
+                <i class="fa-solid fa-share-nodes"></i> Share This Card
+            </button>
+
+        </div><!-- /card-front -->
+
+        <!-- ── BACK ── -->
+        <div class="card-face card-back" id="cardBack">
+
+            <div class="back-header">
+                <img src="/dbp-logo.png" alt="DBP" />
+                <div class="back-header-text">
+                    <strong>@Model.Name</strong>
+                    <span>Tap any detail to copy</span>
+                </div>
+                <button class="back-close" onclick="flipCard()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="info-hint">
+                <i class="fa-solid fa-circle-info"></i>
+                Tap a row to copy that detail to clipboard
+            </p>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Name))
+            {
+                <div class="info-row" onclick="copyInfo(this, '@Model.Name')">
+                    <div class="info-icon"><i class="fa-solid fa-user"></i></div>
+                    <div class="info-content">
+                        <p class="info-label">Full Name</p>
+                        <p class="info-value">@Model.Name</p>
+                    </div>
+                    <i class="fa-solid fa-check copy-tick"></i>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Title))
+            {
+                <div class="info-row" onclick="copyInfo(this, '@Model.Title')">
+                    <div class="info-icon"><i class="fa-solid fa-briefcase"></i></div>
+                    <div class="info-content">
+                        <p class="info-label">Job Title</p>
+                        <p class="info-value">@Model.Title</p>
+                    </div>
+                    <i class="fa-solid fa-check copy-tick"></i>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Org))
+            {
+                <div class="info-row" onclick="copyInfo(this, '@Model.Org')">
+                    <div class="info-icon"><i class="fa-solid fa-building-columns"></i></div>
+                    <div class="info-content">
+                        <p class="info-label">Organisation</p>
+                        <p class="info-value">@Model.Org</p>
+                    </div>
+                    <i class="fa-solid fa-check copy-tick"></i>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Phone))
+            {
+                <div class="info-row" onclick="copyInfo(this, '@Model.Phone')">
+                    <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+                    <div class="info-content">
+                        <p class="info-label">Phone</p>
+                        <p class="info-value">@Model.Phone</p>
+                    </div>
+                    <i class="fa-solid fa-check copy-tick"></i>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Email))
+            {
+                <div class="info-row" onclick="copyInfo(this, '@Model.Email')">
+                    <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="info-content">
+                        <p class="info-label">Email</p>
+                        <p class="info-value">@Model.Email</p>
+                    </div>
+                    <i class="fa-solid fa-check copy-tick"></i>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.GitHub))
+            {
+                <div class="info-row" onclick="copyInfo(this, '@Model.GitHub')">
+                    <div class="info-icon"><i class="fa-brands fa-github"></i></div>
+                    <div class="info-content">
+                        <p class="info-label">GitHub</p>
+                        <p class="info-value">@Model.GitHub</p>
+                    </div>
+                    <i class="fa-solid fa-check copy-tick"></i>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.LinkedIn))
+            {
+                <div class="info-row" onclick="copyInfo(this, '@Model.LinkedIn')">
+                    <div class="info-icon"><i class="fa-brands fa-linkedin"></i></div>
+                    <div class="info-content">
+                        <p class="info-label">LinkedIn</p>
+                        <p class="info-value">@Model.LinkedIn</p>
+                    </div>
+                    <i class="fa-solid fa-check copy-tick"></i>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Portfolio))
+            {
+                <div class="info-row" onclick="copyInfo(this, '@Model.Portfolio')">
+                    <div class="info-icon"><i class="fa-solid fa-globe"></i></div>
+                    <div class="info-content">
+                        <p class="info-label">Website</p>
+                        <p class="info-value">@Model.Portfolio</p>
+                    </div>
+                    <i class="fa-solid fa-check copy-tick"></i>
+                </div>
+            }
+
+            <div class="back-actions">
+                <button class="btn share" style="margin-bottom:0;" onclick="shareCard();" id="shareBtnBack">
+                    <i class="fa-solid fa-share-nodes"></i> Share This Card
+                </button>
+            </div>
+
+        </div><!-- /card-back -->
+
+    </div><!-- /card-flipper -->
+</div><!-- /card-scene -->
+
 <script>
-    var cardUrl  = '@cardUrl';
-    var cardName = '@Model.Name';
+    var cardUrl  = '@Html.Raw(cardUrl)';
+    var cardName = '@Html.Raw(Model.Name)';
+
+    // Match back height to front after load
+    function syncHeight() {
+        var front = document.getElementById('cardFront');
+        var back  = document.getElementById('cardBack');
+        var scene = document.getElementById('cardScene');
+        var flipper = document.getElementById('cardFlipper');
+        var h = front.offsetHeight;
+        back.style.height  = h + 'px';
+        flipper.style.height = h + 'px';
+        scene.style.height = h + 'px';
+    }
+
+    window.addEventListener('load', syncHeight);
+    window.addEventListener('resize', syncHeight);
+
+    function flipCard() {
+        var flipper = document.getElementById('cardFlipper');
+        var hint    = document.getElementById('flipHint');
+        var isFlipped = flipper.classList.toggle('flipped');
+        hint.innerHTML = isFlipped
+            ? '<i class="fa-solid fa-rotate-left"></i> Tap card or ✕ to flip back'
+            : '<i class="fa-solid fa-rotate"></i> Tap card to flip &amp; view details';
+    }
+
+    function copyInfo(row, text) {
+        var tick = row.querySelector('.copy-tick');
+        navigator.clipboard.writeText(text).then(function() {
+            tick.classList.add('show');
+            row.style.background = '#f0fdf4';
+            row.style.borderColor = '#86efac';
+            setTimeout(function() {
+                tick.classList.remove('show');
+                row.style.background = '';
+                row.style.borderColor = '';
+            }, 2000);
+        }).catch(function() {
+            // fallback
+            var el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            tick.classList.add('show');
+            setTimeout(function() { tick.classList.remove('show'); }, 2000);
+        });
+    }
 
     function shareCard() {
         if (navigator.share) {
@@ -101,7 +518,6 @@
                 url: cardUrl
             }).catch(function() {});
         } else {
-            // Fallback: copy to clipboard
             navigator.clipboard.writeText(cardUrl).then(function() {
                 var btn = document.getElementById('shareBtn');
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Link Copied!';
