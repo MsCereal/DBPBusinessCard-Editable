@@ -8,198 +8,307 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>DBP – Digital Business Card Setup</title>
+    <title>DBP – Card Setup</title>
     <link rel="icon" type="image/png" href="/dbp-icon.png" />
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: Arial, sans-serif;
-            background: #f1f5f9;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             padding: 30px 16px 60px;
+            position: relative;
+            overflow-x: hidden;
         }
-        .wrap { width: 100%; max-width: 440px; }
 
+        /* Same background as Welcome */
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                linear-gradient(
+                    155deg,
+                    rgba(10, 25, 70, 0.92) 0%,
+                    rgba(30, 64, 175, 0.88) 45%,
+                    rgba(15, 40, 100, 0.95) 100%
+                ),
+                url('/bg.png') center/cover no-repeat;
+        }
+
+        .wrap {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 440px;
+        }
+
+        /* Back link */
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            text-decoration: none;
+            margin-bottom: 16px;
+            transition: color 0.15s;
+        }
+        .back:hover { color: rgba(255,255,255,0.85); }
+
+        /* Card */
         .card {
             background: #fff;
             border-radius: 20px;
-            padding: 30px 24px 28px;
-            border-top: 6px solid #2563eb;
-            border-bottom: 6px solid #dc2626;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.09);
+            padding: 28px 24px;
+            border-top: 5px solid #2563eb;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
         }
 
-        .logo-wrap { text-align: center; margin-bottom: 14px; }
-        .logo-wrap img { height: 64px; object-fit: contain; }
+        .logo-wrap { text-align: center; margin-bottom: 12px; }
+        .logo-wrap img { height: 56px; object-fit: contain; }
 
-        h1 { text-align: center; color: #111827; font-size: 20px; font-weight: 800; margin-bottom: 4px; }
-        .sub { text-align: center; color: #6b7280; font-size: 12px; margin-bottom: 0; }
+        h1 {
+            text-align: center;
+            color: #111827;
+            font-size: 19px;
+            font-weight: 800;
+            margin-bottom: 3px;
+        }
+        .sub {
+            text-align: center;
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 0;
+        }
 
-        .divider { height: 1px; background: #e5e7eb; margin: 18px 0; }
+        .divider { height: 1px; background: #e5e7eb; margin: 16px 0; }
 
         .section-title {
-            font-size: 10px; font-weight: 700;
-            letter-spacing: 1.5px; text-transform: uppercase;
-            color: #2563eb; margin-bottom: 12px;
-        }
-
-        .form-group { margin-bottom: 13px; }
-        label {
-            display: block; font-size: 11px; font-weight: 700;
-            color: #374151; letter-spacing: 0.3px;
-            text-transform: uppercase; margin-bottom: 5px;
-        }
-        input {
-            width: 100%; padding: 11px 14px;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 10px; font-size: 14px;
-            color: #111827; background: #f9fafb;
-            outline: none; transition: border-color 0.15s, background 0.15s;
-        }
-        input:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
-        input.empid { border-color: #2563eb; font-weight: 700; font-size: 15px; }
-        input[readonly] { background: #eff6ff; color: #1d4ed8; cursor: default; }
-        .hint { font-size: 11px; color: #9ca3af; margin-top: 4px; }
-
-        .alert {
-            padding: 11px 14px; border-radius: 10px;
-            font-size: 13px; margin-bottom: 16px;
-            font-weight: bold; text-align: center;
-        }
-        .alert-error   { background: #fee2e2; color: #b91c1c; }
-        .alert-success { background: #dcfce7; color: #15803d; }
-        .alert-info    { background: #dbeafe; color: #1d4ed8; }
-
-        .btn {
-            display: flex; align-items: center; justify-content: center;
-            gap: 8px; width: 100%; padding: 13px 16px;
-            border-radius: 12px; font-size: 15px; font-weight: 700;
-            cursor: pointer; border: none; text-decoration: none;
-            color: #fff; transition: transform 0.12s, opacity 0.12s;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #2563eb;
             margin-bottom: 10px;
         }
+
+        .form-group { margin-bottom: 11px; }
+
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 4px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 13px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 9px;
+            font-size: 14px;
+            color: #111827;
+            background: #f9fafb;
+            outline: none;
+            transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+        }
+        input:focus {
+            border-color: #2563eb;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+        input.empid {
+            font-weight: 800;
+            font-size: 15px;
+            border-color: #2563eb;
+            color: #1d4ed8;
+        }
+        input[readonly] {
+            background: #eff6ff;
+            color: #1d4ed8;
+            cursor: default;
+        }
+        .hint { font-size: 11px; color: #9ca3af; margin-top: 3px; }
+
+        /* Alerts */
+        .alert {
+            padding: 10px 14px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .alert-error   { background: #fee2e2; color: #b91c1c; }
+        .alert-success { background: #dbeafe; color: #1d4ed8; }
+        .alert-info    { background: #dbeafe; color: #1d4ed8; }
+
+        /* Buttons — unified blue */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 13px 16px;
+            border-radius: 11px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            color: #fff;
+            transition: transform 0.12s, box-shadow 0.12s;
+            margin-bottom: 8px;
+        }
         .btn:last-child { margin-bottom: 0; }
-        .btn:active { transform: scale(0.97); opacity: 0.9; }
-        .btn-save  { background: #2563eb; }
-        .btn-qr    { background: #16a34a; }
-        .btn-reset { background: #dc2626; }
+        .btn:active { transform: scale(0.97); }
+
+        .btn-save {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+        }
+        .btn-save:hover { box-shadow: 0 6px 20px rgba(37,99,235,0.45); }
+
+        .btn-qr {
+            background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+            box-shadow: 0 4px 14px rgba(30,58,138,0.3);
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1.5px solid #e5e7eb;
+            color: #dc2626;
+            font-size: 13px;
+            padding: 10px;
+            box-shadow: none;
+        }
+        .btn-reset:hover { background: #fee2e2; border-color: #fca5a5; }
     </style>
 </head>
 <body>
+
+<div class="bg"></div>
+
 <div class="wrap">
-<div class="card">
+    <a href="/" class="back">← Back to Home</a>
 
-    <div class="logo-wrap">
-        <img src="/dbp-logo.png" alt="DBP" />
-    </div>
-    <h1>Digital Business Card</h1>
-    <p class="sub">Development Bank of the Philippines</p>
+    <div class="card">
 
-    <div class="divider"></div>
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-error">⚠️ @TempData["Error"]</div>
-    }
-    @if (TempData["Reset"] != null)
-    {
-        <div class="alert alert-info">🔄 Card has been reset. Fill in your details again.</div>
-    }
-
-    <form method="post" action="/save">
-        @Html.AntiForgeryToken()
-
-        <p class="section-title">Employee Identity</p>
-
-        <div class="form-group">
-            <label>Employee ID *</label>
-            @if (isExisting)
-            {
-                <input type="text" value="@Model.EmpId" readonly class="empid" />
-                <input type="hidden" name="EmpId" value="@Model.EmpId" />
-                <p class="hint">Permanent — tied to your unique QR code.</p>
-            }
-            else
-            {
-                <input type="text" name="EmpId" value="" placeholder="e.g. 0012345-DBP"
-                       class="empid" maxlength="30" required autocomplete="off" />
-                <p class="hint">Enter your Employee ID — this locks in your QR code forever.</p>
-            }
+        <div class="logo-wrap">
+            <img src="/dbp-logo.png" alt="DBP" />
         </div>
+        <h1>@(isExisting ? "Edit My Card" : "Create My Card")</h1>
+        <p class="sub">Development Bank of the Philippines</p>
 
         <div class="divider"></div>
-        <p class="section-title">Personal Information</p>
 
-        <div class="form-group">
-            <label>Full Name *</label>
-            <input type="text" name="Name" value="@Model.Name"
-                   placeholder="e.g. Chelsea De Purificacion" maxlength="80" required />
-        </div>
-        <div class="form-group">
-            <label>Job Title</label>
-            <input type="text" name="Title" value="@Model.Title"
-                   placeholder="e.g. Software Engineer &amp; Cybersecurity Analyst" maxlength="100" />
-        </div>
-        <div class="form-group">
-            <label>Organisation</label>
-            <input type="text" name="Org" value="@Model.Org"
-                   placeholder="Development Bank of the Philippines" maxlength="120" />
-        </div>
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-error">⚠️ @TempData["Error"]</div>
+        }
+        @if (TempData["Reset"] != null)
+        {
+            <div class="alert alert-info">🔄 Card reset. Fill in your details again.</div>
+        }
 
-        <div class="divider"></div>
-        <p class="section-title">Contact Details</p>
-
-        <div class="form-group">
-            <label>Phone Number</label>
-            <input type="tel" name="Phone" value="@Model.Phone"
-                   placeholder="+63 000 000 0000" maxlength="30" />
-        </div>
-        <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" name="Email" value="@Model.Email"
-                   placeholder="you@dbp.ph" maxlength="120" />
-        </div>
-
-        <div class="divider"></div>
-        <p class="section-title">Links (Optional)</p>
-
-        <div class="form-group">
-            <label>GitHub</label>
-            <input type="url" name="GitHub" value="@Model.GitHub"
-                   placeholder="https://github.com/username" maxlength="200" />
-        </div>
-        <div class="form-group">
-            <label>LinkedIn</label>
-            <input type="url" name="LinkedIn" value="@Model.LinkedIn"
-                   placeholder="https://linkedin.com/in/username" maxlength="200" />
-        </div>
-        <div class="form-group">
-            <label>Portfolio / Website</label>
-            <input type="url" name="Portfolio" value="@Model.Portfolio"
-                   placeholder="https://yoursite.com" maxlength="200" />
-        </div>
-
-        <div class="divider"></div>
-        <button type="submit" class="btn btn-save">💾 Save &amp; Generate My QR</button>
-    </form>
-
-    @if (isExisting)
-    {
-        <a href="/?empId=@Model.EmpId" class="btn btn-qr" style="margin-top:10px;">📱 View My QR Code</a>
-
-        <form method="post" action="/reset/@Model.EmpId" style="margin-top:10px;">
+        <form method="post" action="/save">
             @Html.AntiForgeryToken()
-            <button type="submit" class="btn btn-reset"
-                    onclick="return confirm('Reset your card? All info will be cleared.')">
-                🔄 Reset My Card
-            </button>
-        </form>
-    }
 
-</div>
+            <p class="section-title">Employee Identity</p>
+            <div class="form-group">
+                <label>Employee ID *</label>
+                @if (isExisting)
+                {
+                    <input type="text" value="@Model.EmpId" readonly class="empid" />
+                    <input type="hidden" name="EmpId" value="@Model.EmpId" />
+                    <p class="hint">Permanent — tied to your unique QR code.</p>
+                }
+                else
+                {
+                    <input type="text" name="EmpId" value="" placeholder="e.g. 0012345-DBP"
+                           class="empid" maxlength="30" required autocomplete="off" />
+                    <p class="hint">This locks in your QR code permanently.</p>
+                }
+            </div>
+
+            <div class="divider"></div>
+            <p class="section-title">Personal Information</p>
+
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" name="Name" value="@Model.Name"
+                       placeholder="e.g. Chelsea De Purificacion" maxlength="80" required />
+            </div>
+            <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" name="Title" value="@Model.Title"
+                       placeholder="e.g. Software Engineer" maxlength="100" />
+            </div>
+            <div class="form-group">
+                <label>Organisation</label>
+                <input type="text" name="Org" value="@Model.Org"
+                       placeholder="Development Bank of the Philippines" maxlength="120" />
+            </div>
+
+            <div class="divider"></div>
+            <p class="section-title">Contact Details</p>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="Phone" value="@Model.Phone"
+                       placeholder="+63 000 000 0000" maxlength="30" />
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="Email" value="@Model.Email"
+                       placeholder="you@@dbp.ph" maxlength="120" />
+            </div>
+
+            <div class="divider"></div>
+            <p class="section-title">Links <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#9ca3af;">(optional)</span></p>
+
+            <div class="form-group">
+                <label>GitHub</label>
+                <input type="url" name="GitHub" value="@Model.GitHub"
+                       placeholder="https://github.com/username" maxlength="200" />
+            </div>
+            <div class="form-group">
+                <label>LinkedIn</label>
+                <input type="url" name="LinkedIn" value="@Model.LinkedIn"
+                       placeholder="https://linkedin.com/in/username" maxlength="200" />
+            </div>
+            <div class="form-group">
+                <label>Portfolio / Website</label>
+                <input type="url" name="Portfolio" value="@Model.Portfolio"
+                       placeholder="https://yoursite.com" maxlength="200" />
+            </div>
+
+            <div class="divider"></div>
+            <button type="submit" class="btn btn-save">💾 Save &amp; Generate My QR</button>
+        </form>
+
+        @if (isExisting)
+        {
+            <a href="/qr/@Model.EmpId" class="btn btn-qr" style="margin-top:8px;">📱 View My QR Code</a>
+
+            <form method="post" action="/reset/@Model.EmpId" style="margin-top:8px;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-reset"
+                        onclick="return confirm('Reset your card? All info will be cleared.')">
+                    🔄 Reset My Card
+                </button>
+            </form>
+        }
+
+    </div>
 </div>
 </body>
 </html>

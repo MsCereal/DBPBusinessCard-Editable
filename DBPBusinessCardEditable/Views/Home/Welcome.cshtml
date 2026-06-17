@@ -1,0 +1,317 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>DBP – Digital Business Card</title>
+    <link rel="icon" type="image/png" href="/dbp-icon.png" />
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ── Background: image with blue gradient overlay ── */
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+
+            /* Fallback gradient if no bg.jpg */
+            background:
+                linear-gradient(
+                    155deg,
+                    rgba(10, 25, 70, 0.92) 0%,
+                    rgba(30, 64, 175, 0.88) 45%,
+                    rgba(15, 40, 100, 0.95) 100%
+                ),
+                url('/bg.png') center/cover no-repeat;
+        }
+
+        /* Subtle radial glow for depth */
+        .bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 40%,
+                rgba(37, 99, 235, 0.25) 0%,
+                transparent 70%);
+        }
+
+        /* ── Content ── */
+        .content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
+        }
+
+        /* Logo */
+        .logo-wrap {
+            margin-bottom: 28px;
+        }
+        .logo-wrap img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 20px rgba(0,0,0,0.4));
+        }
+
+        /* Heading */
+        .tagline {
+            color: rgba(255,255,255,0.55);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+        }
+
+        h1 span {
+            color: #93c5fd; /* light blue accent */
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        /* Divider line */
+        .rule {
+            width: 48px;
+            height: 3px;
+            background: linear-gradient(90deg, #2563eb, #60a5fa);
+            border-radius: 2px;
+            margin: 0 auto 36px;
+        }
+
+        /* Steps */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 36px;
+            text-align: left;
+        }
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 14px 16px;
+            backdrop-filter: blur(4px);
+        }
+        .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .step-text strong {
+            display: block;
+            color: #f1f5f9;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .step-text span {
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+        }
+
+        /* CTA Button */
+        .cta {
+            display: block;
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 800;
+            border: none;
+            border-radius: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
+            transition: transform 0.12s, box-shadow 0.12s;
+            margin-bottom: 14px;
+        }
+        .cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.55);
+        }
+        .cta:active { transform: scale(0.98); }
+
+        /* Already have a card link */
+        .existing-link {
+            color: rgba(255,255,255,0.45);
+            font-size: 13px;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 40px;
+        }
+        .existing-link:hover { color: rgba(255,255,255,0.7); }
+
+        /* Already have ID form */
+        .lookup-box {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            padding: 18px 16px;
+            backdrop-filter: blur(4px);
+        }
+        .lookup-box p {
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .lookup-row {
+            display: flex;
+            gap: 8px;
+        }
+        .lookup-row input {
+            flex: 1;
+            padding: 11px 14px;
+            border: 1.5px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .lookup-row input::placeholder { color: rgba(255,255,255,0.3); }
+        .lookup-row input:focus { border-color: #60a5fa; }
+        .lookup-row button {
+            padding: 11px 18px;
+            background: rgba(255,255,255,0.12);
+            border: 1.5px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s;
+        }
+        .lookup-row button:hover { background: rgba(255,255,255,0.2); }
+
+        /* Footer */
+        .footer-note {
+            color: rgba(255,255,255,0.25);
+            font-size: 11px;
+            margin-top: 32px;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg"></div>
+
+<div class="content">
+
+    <div class="logo-wrap">
+        <img src="/dbp-logo.png" alt="Development Bank of the Philippines" />
+    </div>
+
+    <p class="tagline">Development Bank of the Philippines</p>
+    <h1>Your <span>Digital</span><br />Business Card</h1>
+    <p class="subtitle">Create your personalized digital business card with a unique QR code — shareable, scannable, professional.</p>
+
+    <div class="rule"></div>
+
+    <div class="steps">
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text">
+                <strong>Enter your details</strong>
+                <span>Name, title, contact info and links</span>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text">
+                <strong>Generate your QR code</strong>
+                <span>Unique to your Employee ID — permanent forever</span>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">
+                <strong>Share your card</strong>
+                <span>Anyone who scans gets your professional business card</span>
+            </div>
+        </div>
+    </div>
+
+    <a href="/start" class="cta">🪪 Create My Digital Card</a>
+
+    <!-- Returning employee lookup -->
+    <div class="lookup-box">
+        <p>Already have a card? Enter your Employee ID</p>
+        <div class="lookup-row">
+            <input type="text" id="empIdInput" placeholder="e.g. 0012345-DBP"
+                   autocomplete="off" maxlength="30" />
+            <button onclick="goToCard()">Go →</button>
+        </div>
+    </div>
+
+    <p class="footer-note">© @DateTime.Now.Year Development Bank of the Philippines</p>
+
+</div>
+
+<script>
+    function goToCard() {
+        var empId = document.getElementById('empIdInput').value.trim();
+        if (!empId) {
+            document.getElementById('empIdInput').focus();
+            return;
+        }
+        window.location.href = '/qr/' + encodeURIComponent(empId);
+    }
+    document.getElementById('empIdInput').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') goToCard();
+    });
+</script>
+
+</body>
+</html>

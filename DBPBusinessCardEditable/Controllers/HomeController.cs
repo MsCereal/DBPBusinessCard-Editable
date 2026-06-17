@@ -15,29 +15,16 @@ namespace DBPBusinessCardEditable.Controllers
             _profileService = profileService;
         }
 
-        // GET /  — entrance: dark QR screen (employee's own QR page)
-        // Requires empId query param or redirects to setup
-        public IActionResult Index(string empId)
+        // GET /  — Welcome landing page
+        public IActionResult Index()
         {
-            if (string.IsNullOrWhiteSpace(empId))
-                return RedirectToAction("Setup");
-
-            var profile = _profileService.Get(empId);
-            if (profile == null)
-                return RedirectToAction("Setup");
-
-            return View("QREntrance", profile);
+            return View("Welcome");
         }
 
-        // GET /setup  — first-time setup or edit form
-        [HttpGet("/setup")]
-        public IActionResult Setup(string empId)
+        // GET /start  — first-time setup form
+        [HttpGet("/start")]
+        public IActionResult Start()
         {
-            if (!string.IsNullOrWhiteSpace(empId))
-            {
-                var existing = _profileService.GetOrCreate(empId);
-                return View("Edit", existing);
-            }
             return View("Edit", new CardProfile());
         }
 
@@ -68,10 +55,30 @@ namespace DBPBusinessCardEditable.Controllers
             }
             _profileService.Save(model);
             // After saving, show the QR entrance for this employee
-            return RedirectToAction("Index", new { empId = model.EmpId.Trim() });
+            return RedirectToAction("QRScreen", new { empId = model.EmpId.Trim() });
         }
 
-        // POST /reset/{empId}  — reset card, go back to edit form
+        // GET /setup  — edit form (new or existing)
+        [HttpGet("/setup")]
+        public IActionResult Setup(string empId)
+        {
+            if (!string.IsNullOrWhiteSpace(empId))
+            {
+                var existing = _profileService.GetOrCreate(empId);
+                return View("Edit", existing);
+            }
+            return View("Edit", new CardProfile());
+        }
+
+        // GET /qr/{empId}  — employee's QR entrance screen
+        [HttpGet("/qr/{empId}")]
+        public IActionResult QRScreen(string empId)
+        {
+            var profile = _profileService.Get(empId);
+            if (profile == null)
+                return RedirectToAction("Start");
+            return View("QREntrance", profile);
+        }
         [HttpPost("/reset/{empId}")]
         [ValidateAntiForgeryToken]
         public IActionResult Reset(string empId)
