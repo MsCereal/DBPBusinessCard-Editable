@@ -234,6 +234,13 @@
         }
         .lookup-row button:hover { background: rgba(255,255,255,0.2); }
 
+        .lookup-error {
+            color: #fca5a5;
+            font-size: 12px;
+            margin-top: 8px;
+            display: none;
+        }
+
         /* Footer */
         .footer-note {
             color: rgba(255,255,255,0.25);
@@ -291,8 +298,9 @@
         <div class="lookup-row">
             <input type="text" id="empIdInput" placeholder="e.g. 0012345-DBP"
                    autocomplete="off" maxlength="30" />
-            <button onclick="goToCard()">Go →</button>
+            <button id="lookupBtn" onclick="goToCard()">Go →</button>
         </div>
+        <p class="lookup-error" id="lookupError">⚠️ No card found for that Employee ID.</p>
     </div>
 
     <p class="footer-note">© @DateTime.Now.Year Development Bank of the Philippines</p>
@@ -302,12 +310,36 @@
 <script>
     function goToCard() {
         var empId = document.getElementById('empIdInput').value.trim();
+        var errEl = document.getElementById('lookupError');
+        var btn   = document.getElementById('lookupBtn');
+
         if (!empId) {
             document.getElementById('empIdInput').focus();
             return;
         }
-        window.location.href = '/qr/' + encodeURIComponent(empId);
+
+        errEl.style.display = 'none';
+        btn.textContent = '...';
+        btn.disabled = true;
+
+        fetch('/check/' + encodeURIComponent(empId))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.exists) {
+                    window.location.href = '/qr/' + encodeURIComponent(empId);
+                } else {
+                    errEl.style.display = 'block';
+                    btn.textContent = 'Go →';
+                    btn.disabled = false;
+                }
+            })
+            .catch(function() {
+                errEl.style.display = 'block';
+                btn.textContent = 'Go →';
+                btn.disabled = false;
+            });
     }
+
     document.getElementById('empIdInput').addEventListener('keydown', function (e) {
         if (e.key === 'Enter') goToCard();
     });

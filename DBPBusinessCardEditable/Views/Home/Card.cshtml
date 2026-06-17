@@ -1,6 +1,7 @@
 ﻿@model DBPBusinessCardEditable.Models.CardProfile
 @{
     Layout = null;
+    string cardUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/card/{Model.EmpId}";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -9,11 +10,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>@Model.Name – DBP Digital Card</title>
     <link rel="icon" type="image/png" href="/dbp-icon.png" />
-    <!-- Font Awesome 6 Free -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/card.css" />
 </head>
 <body>
+
+<!-- Same blue gradient background as Welcome/Edit -->
+<div class="page-bg"></div>
 
 <div class="card-wrapper">
     <div class="card">
@@ -77,8 +80,40 @@
             </a>
         }
 
+        <!-- Share button — always shown -->
+        <div class="divider"></div>
+        <button class="btn share" onclick="shareCard()" id="shareBtn">
+            <i class="fa-solid fa-share-nodes"></i> Share This Card
+        </button>
+
     </div>
 </div>
+
+<script>
+    var cardUrl  = '@cardUrl';
+    var cardName = '@Model.Name';
+
+    function shareCard() {
+        if (navigator.share) {
+            navigator.share({
+                title: cardName + ' – DBP Digital Business Card',
+                text: 'View ' + cardName + '\'s digital business card',
+                url: cardUrl
+            }).catch(function() {});
+        } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(cardUrl).then(function() {
+                var btn = document.getElementById('shareBtn');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Link Copied!';
+                setTimeout(function() {
+                    btn.innerHTML = '<i class="fa-solid fa-share-nodes"></i> Share This Card';
+                }, 2500);
+            }).catch(function() {
+                prompt('Copy this link:', cardUrl);
+            });
+        }
+    }
+</script>
 
 </body>
 </html>

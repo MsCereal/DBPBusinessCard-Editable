@@ -70,6 +70,16 @@ namespace DBPBusinessCardEditable.Controllers
             return View("Edit", new CardProfile());
         }
 
+        // GET /check/{empId}  — validate if an empId card exists (used by Welcome lookup)
+        [HttpGet("/check/{empId}")]
+        public IActionResult Check(string empId)
+        {
+            var profile = _profileService.Get(empId);
+            if (profile == null)
+                return Json(new { exists = false });
+            return Json(new { exists = true });
+        }
+
         // GET /qr/{empId}  — employee's QR entrance screen
         [HttpGet("/qr/{empId}")]
         public IActionResult QRScreen(string empId)

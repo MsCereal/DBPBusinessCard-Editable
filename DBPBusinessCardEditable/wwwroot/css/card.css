@@ -10,12 +10,28 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: #f1f5f9;
+    background: transparent;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
     padding: 30px 16px 50px;
+    position: relative;
+}
+
+/* Same blue gradient as Welcome/Edit */
+.page-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+        linear-gradient(
+            155deg,
+            rgba(10, 25, 70, 0.95) 0%,
+            rgba(30, 64, 175, 0.90) 45%,
+            rgba(15, 40, 100, 0.97) 100%
+        ),
+        url('/bg.png') center/cover no-repeat;
 }
 
 /* ---- Wrapper ---- */
@@ -23,6 +39,8 @@ body {
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
 /* ---- Card shell ---- */
@@ -169,6 +187,21 @@ h1 {
     background: #4f46e5;
     color: #ffffff;
     box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+/* Share — slate blue, full width */
+.share {
+    color: #2563eb;
+    border-color: #2563eb;
+    width: 100%;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+}
+.share:hover, .share:active {
+    background: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
 }
 
 /* ---- QR section ---- */
