@@ -70,38 +70,49 @@
             overflow: hidden;
         }
 
-        /* Blue accent bar at top */
+        /* Blue accent bar — moved to BOTTOM, away from photo */
         .card-face::before {
             content: '';
             display: block;
             height: 5px;
             background: linear-gradient(90deg, #1e3a8a, #2563eb, #60a5fa);
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            border-radius: 0 0 20px 20px;
         }
 
-        .card-front { padding: 24px 20px 22px; text-align: center; }
+        .card-front { padding: 28px 20px 32px; text-align: center; position: relative; }
         .card-back  {
             position: absolute; top: 0; left: 0;
-            padding: 22px 20px;
+            padding: 22px 20px 32px;
             transform: rotateY(180deg);
             text-align: left;
         }
 
         /* ── FRONT ── */
-        .photo-wrap { margin-bottom: 14px; }
+        .photo-wrap { margin-bottom: 4px; text-align: center; }
         .photo-img {
-            width: 76px; height: 76px;
+            width: 80px; height: 80px;
             border-radius: 50%; object-fit: cover;
             border: 3px solid #e5e7eb;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: block; margin: 0 auto;
         }
         .photo-placeholder {
-            width: 76px; height: 76px;
+            width: 80px; height: 80px;
             border-radius: 50%;
             background: #eff6ff;
             border: 3px solid #bfdbfe;
             display: inline-flex; align-items: center; justify-content: center;
         }
-        .photo-placeholder i { font-size: 30px; color: #93c5fd; }
+        .photo-placeholder i { font-size: 32px; color: #93c5fd; }
+
+        .change-photo-link {
+            display: inline-block; margin-bottom: 12px; margin-top: 4px;
+            font-size: 11px; color: #2563eb; font-weight: 700;
+            text-decoration: none; letter-spacing: 0.3px; cursor: pointer;
+        }
+        .change-photo-link i { font-size: 10px; margin-right: 3px; }
 
         .logo-img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
 
@@ -221,6 +232,11 @@
                 <div class="photo-placeholder"><i class="fa-solid fa-user"></i></div>
             </div>
         }
+
+        <!-- Change photo link — goes to edit page -->
+        <a href="/setup?empId=@Model.EmpId" class="change-photo-link" onclick="event.stopPropagation()">
+            <i class="fa-solid fa-camera"></i> Change Photo
+        </a>
 
         <img src="/dbp-logo.png" alt="DBP" class="logo-img" />
         <h1>@Model.Name</h1>

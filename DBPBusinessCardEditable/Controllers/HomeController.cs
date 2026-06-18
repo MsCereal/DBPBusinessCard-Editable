@@ -48,6 +48,12 @@ namespace DBPBusinessCardEditable.Controllers
                 TempData["Error"] = "Employee ID is required.";
                 return View("Edit", model);
             }
+            // Validate format: 7 digits - 3 letters (e.g. 0000001-DBP)
+            if (!System.Text.RegularExpressions.Regex.IsMatch(model.EmpId.Trim(), @"^\d{7}-[A-Za-z]{3}$"))
+            {
+                TempData["Error"] = "Employee ID must be in the format: 7 digits – 3 letters (e.g. 0000001-DBP).";
+                return View("Edit", model);
+            }
             if (string.IsNullOrWhiteSpace(model.Name))
             {
                 TempData["Error"] = "Full Name is required.";
