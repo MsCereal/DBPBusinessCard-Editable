@@ -197,12 +197,20 @@
 
     <!-- Employee profile -->
     <div class="profile">
-        @if (!string.IsNullOrWhiteSpace(Model.PhotoUrl))
+        @if (!string.IsNullOrWhiteSpace(Model.Photo) && Model.Photo.StartsWith("data:"))
         {
-            <img src="@Model.PhotoUrl" alt="@Model.Name" class="profile-photo"
-                 onerror="this.style.display='none';document.getElementById('phPlaceholder').style.display='flex';" />
-            <div class="profile-photo-placeholder" id="phPlaceholder" style="display:none;">
-                <i class="fa-solid fa-user"></i>
+            <img src="@Model.Photo" alt="@Model.Name" class="profile-photo" />
+        }
+        else if (Model.Photo == "avatar:male")
+        {
+            <div class="profile-photo-placeholder">
+                <i class="fa-solid fa-person"></i>
+            </div>
+        }
+        else if (Model.Photo == "avatar:female")
+        {
+            <div class="profile-photo-placeholder">
+                <i class="fa-solid fa-person-dress"></i>
             </div>
         }
         else

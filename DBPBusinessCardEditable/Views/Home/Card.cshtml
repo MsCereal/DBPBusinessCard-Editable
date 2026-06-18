@@ -197,11 +197,22 @@
     <!-- ── FRONT ── -->
     <div class="card-face card-front" id="cardFront" onclick="flipCard()">
 
-        @if (!string.IsNullOrWhiteSpace(Model.PhotoUrl))
+        @if (!string.IsNullOrWhiteSpace(Model.Photo) && Model.Photo.StartsWith("data:"))
         {
             <div class="photo-wrap">
-                <img src="@Model.PhotoUrl" alt="@Model.Name" class="photo-img"
-                     onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><i class=\'fa-solid fa-user\'></i></div>'" />
+                <img src="@Model.Photo" alt="@Model.Name" class="photo-img" />
+            </div>
+        }
+        else if (Model.Photo == "avatar:male")
+        {
+            <div class="photo-wrap">
+                <div class="photo-placeholder"><i class="fa-solid fa-person"></i></div>
+            </div>
+        }
+        else if (Model.Photo == "avatar:female")
+        {
+            <div class="photo-wrap">
+                <div class="photo-placeholder"><i class="fa-solid fa-person-dress"></i></div>
             </div>
         }
         else
