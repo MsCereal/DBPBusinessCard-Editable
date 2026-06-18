@@ -90,29 +90,47 @@
         }
 
         /* ── FRONT ── */
-        .photo-wrap { margin-bottom: 4px; text-align: center; }
-        .photo-img {
-            width: 80px; height: 80px;
-            border-radius: 50%; object-fit: cover;
-            border: 3px solid #e5e7eb;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: block; margin: 0 auto;
+        .logo-img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
+
+        /* Profile photo with DBP badge */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 14px;
         }
-        .photo-placeholder {
-            width: 80px; height: 80px;
+        .profile-photo-wrap {
+            position: relative;
+            display: inline-block;
+        }
+        .profile-photo {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #e5e7eb;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            display: block;
+        }
+        .profile-avatar {
+            width: 90px; height: 90px;
             border-radius: 50%;
             background: #eff6ff;
             border: 3px solid #bfdbfe;
-            display: inline-flex; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center;
         }
-        .photo-placeholder i { font-size: 32px; color: #93c5fd; }
+        .profile-avatar i { font-size: 38px; color: #93c5fd; }
 
-        .change-photo-link {
-            display: inline-block; margin-bottom: 12px; margin-top: 4px;
-            font-size: 11px; color: #2563eb; font-weight: 700;
-            text-decoration: none; letter-spacing: 0.3px; cursor: pointer;
+        /* Small DBP logo badge overlapping bottom-right */
+        .dbp-badge {
+            position: absolute;
+            bottom: 2px; right: -4px;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #e5e7eb;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
         }
-        .change-photo-link i { font-size: 10px; margin-right: 3px; }
+        .dbp-badge img { width: 26px; height: 26px; object-fit: contain; }
 
         .logo-img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 14px; display: block; margin-left: auto; margin-right: auto; }
 
@@ -208,37 +226,32 @@
     <!-- ── FRONT ── -->
     <div class="card-face card-front" id="cardFront" onclick="flipCard()">
 
-        @if (!string.IsNullOrWhiteSpace(Model.Photo) && Model.Photo.StartsWith("data:"))
-        {
-            <div class="photo-wrap">
-                <img src="@Model.Photo" alt="@Model.Name" class="photo-img" />
+        <!-- Profile header: photo with DBP logo badge -->
+        <div class="profile-header">
+            <div class="profile-photo-wrap">
+                @if (!string.IsNullOrWhiteSpace(Model.Photo) && Model.Photo.StartsWith("data:"))
+                {
+                    <img src="@Model.Photo" alt="@Model.Name" class="profile-photo" />
+                }
+                else if (Model.Photo == "avatar:male")
+                {
+                    <div class="profile-photo profile-avatar"><i class="fa-solid fa-person"></i></div>
+                }
+                else if (Model.Photo == "avatar:female")
+                {
+                    <div class="profile-photo profile-avatar"><i class="fa-solid fa-person-dress"></i></div>
+                }
+                else
+                {
+                    <div class="profile-photo profile-avatar"><i class="fa-solid fa-user"></i></div>
+                }
+                <!-- DBP logo badge bottom-right of photo -->
+                <div class="dbp-badge">
+                    <img src="/dbp-logo.png" alt="DBP" />
+                </div>
             </div>
-        }
-        else if (Model.Photo == "avatar:male")
-        {
-            <div class="photo-wrap">
-                <div class="photo-placeholder"><i class="fa-solid fa-person"></i></div>
-            </div>
-        }
-        else if (Model.Photo == "avatar:female")
-        {
-            <div class="photo-wrap">
-                <div class="photo-placeholder"><i class="fa-solid fa-person-dress"></i></div>
-            </div>
-        }
-        else
-        {
-            <div class="photo-wrap">
-                <div class="photo-placeholder"><i class="fa-solid fa-user"></i></div>
-            </div>
-        }
+        </div>
 
-        <!-- Change photo link — goes to edit page -->
-        <a href="/setup?empId=@Model.EmpId" class="change-photo-link" onclick="event.stopPropagation()">
-            <i class="fa-solid fa-camera"></i> Change Photo
-        </a>
-
-        <img src="/dbp-logo.png" alt="DBP" class="logo-img" />
         <h1>@Model.Name</h1>
         @if (!string.IsNullOrWhiteSpace(Model.Title)) { <p class="job-title">@Model.Title</p> }
         @if (!string.IsNullOrWhiteSpace(Model.Org))   { <p class="org-name">@Model.Org</p> }
