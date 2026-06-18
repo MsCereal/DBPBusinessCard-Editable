@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>DBP – Card Setup</title>
     <link rel="icon" type="image/png" href="/dbp-icon.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -276,6 +277,12 @@
             <p class="section-title">Links <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#9ca3af;">(optional)</span></p>
 
             <div class="form-group">
+                <label>Profile Photo URL</label>
+                <input type="url" name="PhotoUrl" value="@Model.PhotoUrl"
+                       placeholder="https://example.com/your-photo.jpg" maxlength="400" />
+                <p class="hint">Paste a link to your photo (LinkedIn, Google Drive public link, etc.)</p>
+            </div>
+            <div class="form-group">
                 <label>GitHub</label>
                 <input type="url" name="GitHub" value="@Model.GitHub"
                        placeholder="https://github.com/username" maxlength="200" />
@@ -292,18 +299,20 @@
             </div>
 
             <div class="divider"></div>
-            <button type="submit" class="btn btn-save">💾 Save &amp; Generate My QR</button>
+            <button type="submit" class="btn btn-save">
+                Save &amp; Generate My QR
+            </button>
         </form>
 
         @if (isExisting)
         {
-            <a href="/qr/@Model.EmpId" class="btn btn-qr" style="margin-top:8px;">📱 View My QR Code</a>
+            <a href="/qr/@Model.EmpId" class="btn btn-qr" style="margin-top:8px;">View My QR Code</a>
 
             <form method="post" action="/reset/@Model.EmpId" style="margin-top:8px;">
                 @Html.AntiForgeryToken()
                 <button type="submit" class="btn btn-reset"
                         onclick="return confirm('Reset your card? All info will be cleared.')">
-                    🔄 Reset My Card
+                    Reset My Card
                 </button>
             </form>
         }
