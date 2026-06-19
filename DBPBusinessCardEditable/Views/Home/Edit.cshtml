@@ -392,12 +392,12 @@
             </div>
 
             <div class="divider"></div>
-            <button type="submit" class="btn btn-save">Save &amp; Generate My QR</button>
+            <button type="submit" class="btn btn-save">Save &amp; View My QR</button>
         </form>
 
         @if (isExisting)
         {
-            <a href="/qr/@Model.EmpId" class="btn btn-qr" style="margin-top:8px;">View My QR Code</a>
+            <a href="/qr/@Model.EmpId" class="btn btn-qr" style="margin-top:8px;">Go to My QR Screen</a>
             <form method="post" action="/reset/@Model.EmpId" style="margin-top:8px;">
                 @Html.AntiForgeryToken()
                 <button type="submit" class="btn btn-reset"
