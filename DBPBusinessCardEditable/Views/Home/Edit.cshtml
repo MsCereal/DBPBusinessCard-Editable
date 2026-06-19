@@ -200,7 +200,6 @@
         .btn:active { transform: scale(0.97); }
         .btn-save { background: linear-gradient(135deg, #2563eb, #1d4ed8); box-shadow: 0 4px 14px rgba(37,99,235,0.35); }
         .btn-save:hover { box-shadow: 0 6px 20px rgba(37,99,235,0.45); }
-        .btn-qr { background: linear-gradient(135deg, #1d4ed8, #1e3a8a); box-shadow: 0 4px 14px rgba(30,58,138,0.3); }
         .btn-reset { background: transparent; border: 1.5px solid #e5e7eb; color: #dc2626; font-size: 13px; padding: 10px; box-shadow: none; }
         .btn-reset:hover { background: #fee2e2; border-color: #fca5a5; }
     </style>
@@ -397,7 +396,6 @@
 
         @if (isExisting)
         {
-            <a href="/qr/@Model.EmpId" class="btn btn-qr" style="margin-top:8px;">Go to My QR Screen</a>
             <form method="post" action="/reset/@Model.EmpId" style="margin-top:8px;">
                 @Html.AntiForgeryToken()
                 <button type="submit" class="btn btn-reset"
