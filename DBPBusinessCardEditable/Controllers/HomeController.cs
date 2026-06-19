@@ -137,5 +137,61 @@ namespace DBPBusinessCardEditable.Controllers
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             });
         }
+
+        // GET /admin/clear  — wipe all demo cards (show count + confirm button)
+        [HttpGet("/admin/clear")]
+        public IActionResult AdminClear()
+        {
+            int count = _profileService.Count();
+            return Content($@"<!DOCTYPE html>
+<html><head><meta charset='utf-8'/>
+<title>Admin – Clear Cards</title>
+<style>
+body{{font-family:Arial,sans-serif;background:#0f172a;color:#f1f5f9;
+display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}}
+.box{{background:#1e293b;border-radius:16px;padding:32px 28px;max-width:360px;width:100%;text-align:center;}}
+h2{{margin-bottom:8px;font-size:20px;}}
+p{{color:#94a3b8;margin-bottom:24px;font-size:14px;}}
+.count{{font-size:36px;font-weight:800;color:#60a5fa;margin-bottom:4px;}}
+.btn{{display:block;width:100%;padding:14px;border-radius:10px;border:none;
+font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;margin-bottom:10px;}}
+.btn-danger{{background:#dc2626;color:#fff;}}
+.btn-cancel{{background:#334155;color:#f1f5f9;}}
+</style></head>
+<body><div class='box'>
+<p class='count'>{count}</p>
+<h2>Cards in Database</h2>
+<p>Click below to permanently delete all demo cards. This cannot be undone.</p>
+<form method='post' action='/admin/clear'>
+<button type='submit' class='btn btn-danger'
+onclick=""return confirm('Delete all {count} cards?')"">🗑 Delete All Cards</button>
+</form>
+<a href='/' class='btn btn-cancel'>← Back to Home</a>
+</div></body></html>", "text/html");
+        }
+
+        // POST /admin/clear  — execute the clear
+        [HttpPost("/admin/clear")]
+        public IActionResult AdminClearPost()
+        {
+            int deleted = _profileService.ClearAll();
+            return Content($@"<!DOCTYPE html>
+<html><head><meta charset='utf-8'/>
+<title>Admin – Cards Cleared</title>
+<style>
+body{{font-family:Arial,sans-serif;background:#0f172a;color:#f1f5f9;
+display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}}
+.box{{background:#1e293b;border-radius:16px;padding:32px 28px;max-width:360px;width:100%;text-align:center;}}
+h2{{margin-bottom:8px;font-size:20px;color:#4ade80;}}
+p{{color:#94a3b8;margin-bottom:24px;font-size:14px;}}
+.btn{{display:block;width:100%;padding:14px;border-radius:10px;background:#2563eb;
+color:#fff;font-size:15px;font-weight:700;text-decoration:none;}}
+</style></head>
+<body><div class='box'>
+<h2>✅ Done</h2>
+<p>{deleted} card(s) deleted. The database is now empty.</p>
+<a href='/' class='btn'>← Back to Home</a>
+</div></body></html>", "text/html");
+        }
     }
 }
