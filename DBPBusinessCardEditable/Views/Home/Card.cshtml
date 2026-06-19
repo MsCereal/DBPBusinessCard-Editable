@@ -235,11 +235,15 @@
                 }
                 else if (Model.Photo == "avatar:male")
                 {
-                    <div class="profile-photo profile-avatar"><i class="fa-solid fa-mars"></i></div>
+                    <div class="profile-photo profile-avatar">
+                        <img src="/dbp-boy.png" alt="Male" style="width:100%;height:100%;object-fit:cover;" />
+                    </div>
                 }
                 else if (Model.Photo == "avatar:female")
                 {
-                    <div class="profile-photo profile-avatar"><i class="fa-solid fa-venus" style="color:#db2777;"></i></div>
+                    <div class="profile-photo profile-avatar">
+                        <img src="/dbp-girl.png" alt="Female" style="width:100%;height:100%;object-fit:cover;" />
+                    </div>
                 }
                 else
                 {
@@ -342,7 +346,7 @@
         {
             <div class="info-row" onclick="copyInfo(this,'@Model.Org')">
                 <div class="info-icon"><i class="fa-solid fa-building-columns"></i></div>
-                <div class="info-content"><p class="info-label">Organisation</p><p class="info-value">@Model.Org</p></div>
+                <div class="info-content"><p class="info-label">Organization</p><p class="info-value">@Model.Org</p></div>
                 <i class="fa-solid fa-check copy-tick"></i>
             </div>
         }
@@ -407,10 +411,12 @@
         var back    = document.getElementById('cardBack');
         var flipper = document.getElementById('cardFlipper');
         var scene   = document.getElementById('cardScene');
-        var h = front.offsetHeight;
-        back.style.height    = h + 'px';
+        var flipped = flipper.classList.contains('flipped');
+        var h = flipped ? back.scrollHeight : front.offsetHeight;
         flipper.style.height = h + 'px';
         scene.style.height   = h + 'px';
+        // Also update back absolute height to its own content
+        back.style.height = back.scrollHeight + 'px';
     }
     window.addEventListener('load', syncHeight);
     window.addEventListener('resize', syncHeight);
@@ -422,6 +428,7 @@
         hint.innerHTML = flipped
             ? '<i class="fa-solid fa-rotate-left"></i> Tap ✕ or card to flip back'
             : '<i class="fa-solid fa-rotate"></i> Tap card to flip &amp; view details';
+        setTimeout(syncHeight, 300); // after flip animation
     }
 
     function copyInfo(row, text) {
