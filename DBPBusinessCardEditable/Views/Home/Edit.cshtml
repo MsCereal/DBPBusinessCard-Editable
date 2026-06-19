@@ -7,7 +7,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DBP – Card Setup</title>
     <link rel="icon" type="image/png" href="/dbp-icon.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -25,108 +25,70 @@
             overflow-x: hidden;
         }
 
-        /* Same background as Welcome */
         .bg {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
+            position: fixed; inset: 0; z-index: 0;
             background:
-                linear-gradient(
-                    155deg,
-                    rgba(10, 25, 70, 0.92) 0%,
-                    rgba(30, 64, 175, 0.88) 45%,
-                    rgba(15, 40, 100, 0.95) 100%
-                ),
+                linear-gradient(155deg,
+                    rgba(10,25,70,0.92) 0%,
+                    rgba(30,64,175,0.88) 45%,
+                    rgba(15,40,100,0.95) 100%),
                 url('/bg.png') center/cover no-repeat;
         }
 
-        .wrap {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 440px;
-        }
+        .wrap { position: relative; z-index: 1; width: 100%; max-width: 440px; }
 
-        /* Back link */
         .back {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: rgba(255,255,255,0.5);
-            font-size: 13px;
-            text-decoration: none;
-            margin-bottom: 16px;
-            transition: color 0.15s;
+            display: inline-flex; align-items: center; gap: 6px;
+            color: rgba(255,255,255,0.5); font-size: 13px;
+            text-decoration: none; margin-bottom: 16px; transition: color 0.15s;
         }
         .back:hover { color: rgba(255,255,255,0.85); }
 
-        /* Card */
         .card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 28px 24px;
-            border-top: 5px solid #2563eb;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            background: #fff; border-radius: 20px; padding: 28px 24px;
+            border-top: 5px solid #2563eb; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
         }
 
-        /* ── Profile photo section at top ── */
-        .logo-wrap { text-align: center; margin-bottom: 20px; }
+        /* ── Photo section ── */
+        .photo-section { text-align: center; margin-bottom: 18px; }
 
         .photo-section-label {
             font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
-            text-transform: uppercase; color: #2563eb; margin-bottom: 12px;
+            text-transform: uppercase; color: #2563eb; margin-bottom: 10px;
         }
 
         .photo-top-wrap {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-            margin-bottom: 6px;
+            position: relative; display: inline-block;
+            cursor: pointer; margin-bottom: 6px;
         }
 
         .photo-top-circle {
-            width: 96px; height: 96px;
-            border-radius: 50%;
+            width: 96px; height: 96px; border-radius: 50%;
             border: 3px solid #e5e7eb;
             box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-            display: block;
-            background: #f8fafc;
-            overflow: hidden;
-        }
-        .photo-top-circle.avatar-circle {
+            background: #f8fafc; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
         }
-        .photo-top-circle.avatar-circle i { font-size: 42px; color: #bfdbfe; }
-        .photo-top-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-top-circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .photo-top-circle i { font-size: 42px; color: #bfdbfe; }
 
-        /* Camera badge — top right */
         .camera-badge {
-            position: absolute;
-            top: 2px; right: -4px;
-            width: 30px; height: 30px;
-            border-radius: 50%;
-            background: #2563eb;
-            border: 2.5px solid #fff;
+            position: absolute; top: 2px; right: -4px;
+            width: 30px; height: 30px; border-radius: 50%;
+            background: #2563eb; border: 2.5px solid #fff;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 2px 8px rgba(37,99,235,0.4);
-            cursor: pointer;
-            transition: background 0.15s, transform 0.12s;
+            cursor: pointer; transition: background 0.15s, transform 0.12s;
         }
         .camera-badge:hover { background: #1d4ed8; transform: scale(1.1); }
         .camera-badge i { font-size: 12px; color: #fff; }
 
         .photo-tap-hint {
             font-size: 11px; color: #93c5fd; font-weight: 600;
-            letter-spacing: 0.3px; margin-bottom: 14px;
+            letter-spacing: 0.3px; margin-bottom: 12px; display: block;
         }
 
-        /* Avatar picker — clearly labeled */
-        .avatar-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
+        .avatar-section { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 
         .avatar-or {
             display: flex; align-items: center; gap: 8px;
@@ -144,8 +106,7 @@
 
         .avatar-quick-btn {
             display: flex; flex-direction: column; align-items: center; gap: 4px;
-            padding: 10px 18px;
-            border: 1.5px solid #e5e7eb; border-radius: 10px;
+            padding: 10px 18px; border: 1.5px solid #e5e7eb; border-radius: 10px;
             background: #fff; cursor: pointer;
             transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
         }
@@ -154,107 +115,54 @@
             font-size: 10px; font-weight: 700; color: #6b7280;
             text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .avatar-quick-btn:hover { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 8px rgba(37,99,235,0.12); }
-        .avatar-quick-btn.selected { border-color: #2563eb; background: #dbeafe; }
         .avatar-quick-btn:hover { border-color: #2563eb; background: #eff6ff; }
         .avatar-quick-btn.selected { border-color: #2563eb; background: #dbeafe; }
 
-        h1 {
-            text-align: center;
-            color: #111827;
-            font-size: 19px;
-            font-weight: 800;
-            margin-bottom: 3px;
-        }
-        .sub {
-            text-align: center;
-            color: #6b7280;
-            font-size: 12px;
-            margin-bottom: 0;
-        }
-
+        /* ── Form ── */
+        h1 { text-align: center; color: #111827; font-size: 19px; font-weight: 800; margin-bottom: 3px; }
+        .sub { text-align: center; color: #6b7280; font-size: 12px; }
         .divider { height: 1px; background: #e5e7eb; margin: 16px 0; }
 
         .section-title {
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: #2563eb;
-            margin-bottom: 10px;
+            font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+            text-transform: uppercase; color: #2563eb; margin-bottom: 10px;
         }
 
         .form-group { margin-bottom: 11px; }
 
         label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            color: #374151;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            margin-bottom: 4px;
+            display: block; font-size: 11px; font-weight: 700; color: #374151;
+            text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px;
         }
 
         input {
-            width: 100%;
-            padding: 10px 13px;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 9px;
-            font-size: 14px;
-            color: #111827;
-            background: #f9fafb;
-            outline: none;
+            width: 100%; padding: 10px 13px; border: 1.5px solid #e5e7eb;
+            border-radius: 9px; font-size: 14px; color: #111827;
+            background: #f9fafb; outline: none;
             transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
         }
         input:focus {
-            border-color: #2563eb;
-            background: #fff;
+            border-color: #2563eb; background: #fff;
             box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
         }
-        input.empid {
-            font-weight: 800;
-            font-size: 15px;
-            border-color: #2563eb;
-            color: #1d4ed8;
-        }
-        input[readonly] {
-            background: #eff6ff;
-            color: #1d4ed8;
-            cursor: default;
-        }
+        input.empid { font-weight: 800; font-size: 15px; border-color: #2563eb; color: #1d4ed8; }
+        input[readonly] { background: #eff6ff; color: #1d4ed8; cursor: default; }
         .hint { font-size: 11px; color: #9ca3af; margin-top: 3px; }
 
-        /* Alerts */
         .alert {
-            padding: 10px 14px;
-            border-radius: 9px;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            text-align: center;
+            padding: 10px 14px; border-radius: 9px; font-size: 13px;
+            font-weight: 700; margin-bottom: 14px; text-align: center;
         }
-        .alert-error   { background: #fee2e2; color: #b91c1c; }
-        .alert-success { background: #dbeafe; color: #1d4ed8; }
-        .alert-info    { background: #dbeafe; color: #1d4ed8; }
+        .alert-error { background: #fee2e2; color: #b91c1c; }
+        .alert-info  { background: #dbeafe; color: #1d4ed8; }
 
-        /* Buttons — unified blue */
+        /* ── Buttons ── */
         .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 13px 16px;
-            border-radius: 11px;
-            font-size: 15px;
-            font-weight: 800;
-            cursor: pointer;
-            border: none;
-            text-decoration: none;
-            color: #fff;
-            transition: transform 0.12s, box-shadow 0.12s;
-            margin-bottom: 8px;
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; width: 100%; padding: 13px 16px; border-radius: 11px;
+            font-size: 15px; font-weight: 800; cursor: pointer; border: none;
+            text-decoration: none; color: #fff;
+            transition: transform 0.12s, box-shadow 0.12s; margin-bottom: 8px;
         }
         .btn:last-child { margin-bottom: 0; }
         .btn:active { transform: scale(0.97); }
@@ -271,72 +179,12 @@
         }
 
         .btn-reset {
-            background: transparent;
-            border: 1.5px solid #e5e7eb;
-            color: #dc2626;
-            font-size: 13px;
-            padding: 10px;
-            box-shadow: none;
+            background: transparent; border: 1.5px solid #e5e7eb;
+            color: #dc2626; font-size: 13px; padding: 10px; box-shadow: none;
         }
         .btn-reset:hover { background: #fee2e2; border-color: #fca5a5; }
-
-        /* ── Photo Picker ── */
-        .photo-picker {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            background: #f8fafc;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 14px;
-        }
-
-        .photo-preview-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .photo-preview {
-            width: 80px; height: 80px;
-            border-radius: 50%;
-            border: 2.5px dashed #93c5fd;
-            background: #eff6ff;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
-            transition: border-color 0.15s, background 0.15s;
-        }
-        .photo-preview:hover { border-color: #2563eb; background: #dbeafe; }
-        .photo-preview img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-
-        .photo-preview-label {
-            font-size: 10px; color: #93c5fd; font-weight: 700;
-            letter-spacing: 0.5px; text-transform: uppercase;
-        }
-
-        .avatar-options { flex: 1; }
-        .avatar-label {
-            font-size: 11px; color: #9ca3af; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
-        }
-        .avatar-row { display: flex; gap: 8px; flex-wrap: wrap; }
-
-        .avatar-btn {
-            display: flex; flex-direction: column; align-items: center;
-            gap: 4px; padding: 10px 14px;
-            border: 1.5px solid #e5e7eb; border-radius: 10px;
-            background: #fff; cursor: pointer; font-size: 22px; color: #2563eb;
-            transition: border-color 0.15s, background 0.15s;
-            min-width: 56px;
-        }
-        .avatar-btn span { font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; }
-        .avatar-btn:hover { border-color: #2563eb; background: #eff6ff; }
-        .avatar-btn.selected { border-color: #2563eb; background: #dbeafe; }
-        .avatar-clear { color: #94a3b8; }
-        .avatar-clear:hover { border-color: #94a3b8; background: #f8fafc; color: #374151; }
+    </style>
+</head>
 <body>
 
 <div class="bg"></div>
@@ -346,18 +194,16 @@
 
     <div class="card">
 
-        <div class="logo-wrap">
-            <!-- Hidden inputs -->
+        <!-- Photo section at top -->
+        <div class="photo-section">
             <input type="hidden" name="Photo" id="photoData" value="@Model.Photo" />
             <input type="file" id="photoFileInput" accept="image/*"
                    style="display:none;" onchange="handlePhotoFile(this)" />
 
             <p class="photo-section-label">Profile Photo</p>
 
-            <!-- Photo circle with camera badge -->
             <div class="photo-top-wrap" onclick="document.getElementById('photoFileInput').click()">
-                <div class="photo-top-circle @(!string.IsNullOrWhiteSpace(Model.Photo) && Model.Photo.StartsWith("data:") ? "" : "avatar-circle")"
-                     id="photoTopCircle">
+                <div class="photo-top-circle" id="photoTopCircle">
                     @if (!string.IsNullOrWhiteSpace(Model.Photo) && Model.Photo.StartsWith("data:"))
                     {
                         <img src="@Model.Photo" alt="Photo" />
@@ -380,18 +226,19 @@
                 </div>
             </div>
 
-            <p class="photo-tap-hint">Tap photo or camera icon to upload / take selfie</p>
+            <span class="photo-tap-hint">Tap circle or camera icon to upload / take selfie</span>
 
-            <!-- Avatar picker — clearly separated -->
             <div class="avatar-section">
                 <div class="avatar-or"><span>or pick a default avatar</span></div>
                 <div class="avatar-pick-row">
-                    <button type="button" class="avatar-quick-btn @(Model.Photo == "avatar:male" ? "selected" : "")"
+                    <button type="button"
+                            class="avatar-quick-btn @(Model.Photo == "avatar:male" ? "selected" : "")"
                             onclick="setAvatar('avatar:male')">
                         <span class="av-icon"><i class="fa-solid fa-person"></i></span>
                         <span class="av-label">Male</span>
                     </button>
-                    <button type="button" class="avatar-quick-btn @(Model.Photo == "avatar:female" ? "selected" : "")"
+                    <button type="button"
+                            class="avatar-quick-btn @(Model.Photo == "avatar:female" ? "selected" : "")"
                             onclick="setAvatar('avatar:female')">
                         <span class="av-icon"><i class="fa-solid fa-person-dress"></i></span>
                         <span class="av-label">Female</span>
@@ -399,6 +246,7 @@
                 </div>
             </div>
         </div>
+
         <h1>@(isExisting ? "Edit My Card" : "Create My Card")</h1>
         <p class="sub">Development Bank of the Philippines</p>
 
@@ -410,7 +258,7 @@
         }
         @if (TempData["Reset"] != null)
         {
-            <div class="alert alert-info">🔄 Card reset. Fill in your details again.</div>
+            <div class="alert alert-info">Card reset. Fill in your details again.</div>
         }
 
         <form method="post" action="/save">
@@ -427,11 +275,12 @@
                 }
                 else
                 {
-                    <input type="text" name="EmpId" id="empIdInput" value="" placeholder="e.g. 0000001-DBP"
-                           class="empid" maxlength="11" required autocomplete="off"
+                    <input type="text" name="EmpId" id="empIdInput" value=""
+                           placeholder="e.g. 0000001-DBP" class="empid"
+                           maxlength="11" required autocomplete="off"
                            pattern="\d{7}-[A-Za-z]{3}"
                            title="Format: 7 digits, dash, 3 letters — e.g. 0000001-DBP" />
-                    <p class="hint">Format: <strong>7 digits – 3 letters</strong> (e.g. 0000001-DBP). This locks in your QR code permanently.</p>
+                    <p class="hint">Format: 7 digits – 3 letters (e.g. 0000001-DBP). Permanent.</p>
                 }
             </div>
 
@@ -488,15 +337,12 @@
             </div>
 
             <div class="divider"></div>
-            <button type="submit" class="btn btn-save">
-                Save &amp; Generate My QR
-            </button>
+            <button type="submit" class="btn btn-save">Save &amp; Generate My QR</button>
         </form>
 
         @if (isExisting)
         {
             <a href="/qr/@Model.EmpId" class="btn btn-qr" style="margin-top:8px;">View My QR Code</a>
-
             <form method="post" action="/reset/@Model.EmpId" style="margin-top:8px;">
                 @Html.AntiForgeryToken()
                 <button type="submit" class="btn btn-reset"
@@ -508,26 +354,22 @@
 
     </div>
 </div>
-</div>
 
 <script>
-    // ── Employee ID auto-format: 7digits-3letters ──
     var empInput = document.getElementById('empIdInput');
     if (empInput) {
         empInput.addEventListener('input', function() {
             var raw = this.value.replace(/[^0-9A-Za-z]/g, '');
             var digits = raw.replace(/[^0-9]/g, '').slice(0, 7);
             var letters = raw.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 3);
-            if (digits.length < 7) {
-                this.value = digits;
-            } else {
-                this.value = digits + (letters.length > 0 ? '-' + letters : (raw.length > 7 ? '-' : ''));
-            }
+            this.value = digits.length < 7
+                ? digits
+                : digits + (letters.length > 0 ? '-' + letters : (raw.length > 7 ? '-' : ''));
         });
         empInput.addEventListener('keydown', function(e) {
             if (this.value.length === 7 && !this.value.includes('-') &&
                 e.key !== 'Backspace' && e.key !== 'Delete') {
-                this.value = this.value + '-';
+                this.value += '-';
             }
         });
     }
@@ -546,9 +388,8 @@
                 canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                 var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
                 document.getElementById('photoData').value = dataUrl;
-                var circle = document.getElementById('photoTopCircle');
-                circle.classList.remove('avatar-circle');
-                circle.innerHTML = '<img src="' + dataUrl + '" alt="Photo" style="width:100%;height:100%;object-fit:cover;" />';
+                var c = document.getElementById('photoTopCircle');
+                c.innerHTML = '<img src="' + dataUrl + '" alt="Photo" style="width:100%;height:100%;object-fit:cover;display:block;" />';
                 document.querySelectorAll('.avatar-quick-btn').forEach(function(b) { b.classList.remove('selected'); });
             };
             img.src = e.target.result;
@@ -558,11 +399,10 @@
 
     function setAvatar(key) {
         document.getElementById('photoData').value = key;
-        var circle = document.getElementById('photoTopCircle');
-        circle.classList.add('avatar-circle');
-        circle.innerHTML = key === 'avatar:female'
-            ? '<i class="fa-solid fa-person-dress" style="font-size:38px;color:#93c5fd;"></i>'
-            : '<i class="fa-solid fa-person" style="font-size:38px;color:#93c5fd;"></i>';
+        var c = document.getElementById('photoTopCircle');
+        c.innerHTML = key === 'avatar:female'
+            ? '<i class="fa-solid fa-person-dress" style="font-size:42px;color:#bfdbfe;"></i>'
+            : '<i class="fa-solid fa-person" style="font-size:42px;color:#bfdbfe;"></i>';
         document.querySelectorAll('.avatar-quick-btn').forEach(function(b) { b.classList.remove('selected'); });
         event.currentTarget.classList.add('selected');
     }
