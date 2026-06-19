@@ -51,7 +51,7 @@
         }
 
         .photo-top-wrap {
-            position: relative; display: inline-block; margin-bottom: 10px;
+            position: relative; display: inline-block; margin-bottom: 6px;
         }
 
         .photo-top-circle {
@@ -115,6 +115,58 @@
         .avatar-quick-btn:hover { border-color: #2563eb; background: #eff6ff; }
         .avatar-quick-btn.selected { border-color: #2563eb; background: #dbeafe; }
 
+        /* Photo options popup sheet */
+        .photo-sheet-overlay {
+            display: none; position: fixed; inset: 0; z-index: 100;
+            background: rgba(0,0,0,0.35); backdrop-filter: blur(2px);
+        }
+        .photo-sheet-overlay.open { display: flex; align-items: flex-end; justify-content: center; }
+
+        .photo-sheet {
+            background: #fff; border-radius: 20px 20px 0 0;
+            padding: 20px 20px 32px; width: 100%; max-width: 440px;
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.2);
+            animation: slideUp 0.25s ease;
+        }
+        @@keyframes slideUp {
+            from { transform: translateY(100%); }
+            to   { transform: translateY(0); }
+        }
+
+        .photo-sheet-title {
+            text-align: center; font-size: 11px; font-weight: 800;
+            letter-spacing: 1.5px; text-transform: uppercase; color: #9ca3af;
+            margin-bottom: 16px;
+        }
+
+        .photo-sheet-options { display: flex; flex-direction: column; gap: 10px; }
+
+        .sheet-option {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 16px; border: 1.5px solid #e5e7eb; border-radius: 12px;
+            background: #fff; cursor: pointer; width: 100%;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .sheet-option:hover { border-color: #2563eb; background: #eff6ff; }
+        .sheet-option-icon {
+            width: 42px; height: 42px; border-radius: 10px; background: #eff6ff;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .sheet-option-icon i { font-size: 18px; color: #2563eb; }
+        .sheet-option-icon.male-icon   { background: #dbeafe; }
+        .sheet-option-icon.female-icon { background: #fce7f3; }
+        .sheet-option-icon .fa-mars    { color: #2563eb; }
+        .sheet-option-icon .fa-venus   { color: #db2777; }
+        .sheet-option-text strong { display: block; font-size: 14px; color: #111827; font-weight: 700; }
+        .sheet-option-text span   { font-size: 12px; color: #9ca3af; }
+
+        .sheet-cancel {
+            margin-top: 10px; width: 100%; padding: 13px; border: none;
+            border-radius: 12px; background: #f3f4f6; color: #6b7280;
+            font-size: 14px; font-weight: 700; cursor: pointer;
+        }
+        .sheet-cancel:hover { background: #e5e7eb; }
+
         /* Form */
         h1 { text-align: center; color: #111827; font-size: 19px; font-weight: 800; margin-bottom: 3px; }
         .sub { text-align: center; color: #6b7280; font-size: 12px; }
@@ -164,10 +216,8 @@
         <!-- ── Photo section ── -->
         <div class="photo-section">
             <input type="hidden" name="Photo" id="photoData" value="@Model.Photo" />
-            <!-- Upload from file explorer (works on all devices) -->
             <input type="file" id="photoFileInput" accept="image/*"
                    style="display:none;" onchange="handlePhotoFile(this)" />
-            <!-- Camera capture (mobile only — on desktop opens file picker too) -->
             <input type="file" id="photoCameraInput" accept="image/*" capture="user"
                    style="display:none;" onchange="handlePhotoFile(this)" />
 
@@ -181,53 +231,68 @@
                     }
                     else if (Model.Photo == "avatar:male")
                     {
-                        <i class="fa-solid fa-person"></i>
+                        <i class="fa-solid fa-mars"></i>
                     }
                     else if (Model.Photo == "avatar:female")
                     {
-                        <i class="fa-solid fa-person-dress"></i>
+                        <i class="fa-solid fa-venus" style="color:#db2777;"></i>
                     }
                     else
                     {
                         <img src="/dbp-logo.png" alt="DBP" style="width:58px;height:58px;object-fit:contain;" />
                     }
                 </div>
-                <div class="camera-badge" onclick="document.getElementById('photoCameraInput').click()">
+                <!-- Camera badge → opens the sheet -->
+                <div class="camera-badge" onclick="openPhotoSheet()">
                     <i class="fa-solid fa-camera"></i>
                 </div>
             </div>
+        </div>
 
-            <!-- Two clear buttons: Take Photo (camera) and Upload (file) -->
-            <div class="photo-actions">
-                <button type="button" class="photo-action-btn"
-                        onclick="document.getElementById('photoCameraInput').click()">
-                    <i class="fa-solid fa-camera"></i>
-                    <span>Take Photo</span>
-                </button>
-                <button type="button" class="photo-action-btn"
-                        onclick="document.getElementById('photoFileInput').click()">
-                    <i class="fa-solid fa-image"></i>
-                    <span>Upload Image</span>
-                </button>
-            </div>
+        <!-- ── Photo options bottom sheet ── -->
+        <div class="photo-sheet-overlay" id="photoSheetOverlay" onclick="closePhotoSheet()">
+            <div class="photo-sheet" onclick="event.stopPropagation()">
+                <p class="photo-sheet-title">Choose Photo</p>
+                <div class="photo-sheet-options">
 
-            <!-- Default avatar picker -->
-            <div class="avatar-section">
-                <div class="avatar-or"><span>or pick a default avatar</span></div>
-                <div class="avatar-pick-row">
-                    <button type="button"
-                            class="avatar-quick-btn @(Model.Photo == "avatar:male" ? "selected" : "")"
-                            onclick="setAvatar('avatar:male')">
-                        <span class="av-icon"><i class="fa-solid fa-person"></i></span>
-                        <span class="av-label">Male</span>
+                    <button type="button" class="sheet-option"
+                            onclick="document.getElementById('photoCameraInput').click(); closePhotoSheet()">
+                        <div class="sheet-option-icon"><i class="fa-solid fa-camera"></i></div>
+                        <div class="sheet-option-text">
+                            <strong>Take Photo</strong>
+                            <span>Open camera to take a selfie</span>
+                        </div>
                     </button>
-                    <button type="button"
-                            class="avatar-quick-btn @(Model.Photo == "avatar:female" ? "selected" : "")"
-                            onclick="setAvatar('avatar:female')">
-                        <span class="av-icon"><i class="fa-solid fa-person-dress"></i></span>
-                        <span class="av-label">Female</span>
+
+                    <button type="button" class="sheet-option"
+                            onclick="document.getElementById('photoFileInput').click(); closePhotoSheet()">
+                        <div class="sheet-option-icon"><i class="fa-solid fa-image"></i></div>
+                        <div class="sheet-option-text">
+                            <strong>Upload Image</strong>
+                            <span>Choose a photo from your device</span>
+                        </div>
                     </button>
+
+                    <button type="button" class="sheet-option"
+                            onclick="setAvatar('avatar:male'); closePhotoSheet()">
+                        <div class="sheet-option-icon male-icon"><i class="fa-solid fa-mars"></i></div>
+                        <div class="sheet-option-text">
+                            <strong>Male Avatar</strong>
+                            <span>Use default male icon</span>
+                        </div>
+                    </button>
+
+                    <button type="button" class="sheet-option"
+                            onclick="setAvatar('avatar:female'); closePhotoSheet()">
+                        <div class="sheet-option-icon female-icon"><i class="fa-solid fa-venus"></i></div>
+                        <div class="sheet-option-text">
+                            <strong>Female Avatar</strong>
+                            <span>Use default female icon</span>
+                        </div>
+                    </button>
+
                 </div>
+                <button type="button" class="sheet-cancel" onclick="closePhotoSheet()">Cancel</button>
             </div>
         </div>
 
@@ -274,7 +339,7 @@
             <div class="form-group">
                 <label>Full Name *</label>
                 <input type="text" name="Name" value="@Model.Name"
-                       placeholder="e.g. Chelsea De Purificacion" maxlength="80" required />
+                       placeholder="e.g. Sea Den E. Puri" maxlength="80" required />
             </div>
             <div class="form-group">
                 <label>Job Title</label>
@@ -282,7 +347,7 @@
                        placeholder="e.g. Software Engineer" maxlength="100" />
             </div>
             <div class="form-group">
-                <label>Organisation</label>
+                <label>Organization</label>
                 <input type="text" name="Org" value="@Model.Org"
                        placeholder="Development Bank of the Philippines" maxlength="120" />
             </div>
@@ -358,6 +423,13 @@
         });
     }
 
+    function openPhotoSheet() {
+        document.getElementById('photoSheetOverlay').classList.add('open');
+    }
+    function closePhotoSheet() {
+        document.getElementById('photoSheetOverlay').classList.remove('open');
+    }
+
     function handlePhotoFile(input) {
         if (!input.files || !input.files[0]) return;
         var reader = new FileReader();
@@ -374,7 +446,6 @@
                 document.getElementById('photoData').value = dataUrl;
                 var c = document.getElementById('photoTopCircle');
                 c.innerHTML = '<img src="' + dataUrl + '" alt="Photo" style="width:100%;height:100%;object-fit:cover;display:block;" />';
-                document.querySelectorAll('.avatar-quick-btn').forEach(function(b) { b.classList.remove('selected'); });
             };
             img.src = e.target.result;
         };
@@ -384,11 +455,11 @@
     function setAvatar(key) {
         document.getElementById('photoData').value = key;
         var c = document.getElementById('photoTopCircle');
-        c.innerHTML = key === 'avatar:female'
-            ? '<i class="fa-solid fa-person-dress" style="font-size:42px;color:#bfdbfe;"></i>'
-            : '<i class="fa-solid fa-person" style="font-size:42px;color:#bfdbfe;"></i>';
-        document.querySelectorAll('.avatar-quick-btn').forEach(function(b) { b.classList.remove('selected'); });
-        event.currentTarget.classList.add('selected');
+        if (key === 'avatar:female') {
+            c.innerHTML = '<i class="fa-solid fa-venus" style="font-size:42px;color:#db2777;"></i>';
+        } else {
+            c.innerHTML = '<i class="fa-solid fa-mars" style="font-size:42px;color:#2563eb;"></i>';
+        }
     }
 </script>
 
