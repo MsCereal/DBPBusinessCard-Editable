@@ -13,6 +13,7 @@ namespace DBPBusinessCardEditable.Models
         public string GitHub    { get; set; } = "";
         public string LinkedIn  { get; set; } = "";
         public string Portfolio { get; set; } = "";
+        public string Office    { get; set; } = "";   // office/branch — opens Google Maps on click
         public string Photo     { get; set; } = "";   // base64 data URI or "avatar:male" / "avatar:female"
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
     }

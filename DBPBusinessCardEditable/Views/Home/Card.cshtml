@@ -138,6 +138,16 @@
         .job-title { color: #334155; font-size: 13px; font-weight: 500; margin-bottom: 3px; }
         .org-name  { color: #64748b; font-size: 12px; }
 
+        /* Office/branch — clickable, opens Google Maps */
+        .office-link {
+            display: inline-flex; align-items: center; gap: 5px;
+            color: #2563eb; font-size: 12px; font-weight: 600;
+            text-decoration: none; margin-top: 5px;
+            transition: color 0.15s;
+        }
+        .office-link:hover { color: #1d4ed8; text-decoration: underline; }
+        .office-link i { font-size: 12px; }
+
         .divider { height: 1px; background: #f1f5f9; margin: 14px 0; }
 
         /* Buttons — blue outline, fill on hover */
@@ -259,6 +269,14 @@
         <h1>@Model.Name</h1>
         @if (!string.IsNullOrWhiteSpace(Model.Title)) { <p class="job-title">@Model.Title</p> }
         @if (!string.IsNullOrWhiteSpace(Model.Org))   { <p class="org-name">@Model.Org</p> }
+        @if (!string.IsNullOrWhiteSpace(Model.Office))
+        {
+            <a class="office-link"
+               href="https://www.google.com/maps/search/?api=1&query=@Uri.EscapeDataString(Model.Office)"
+               target="_blank" rel="noopener" onclick="event.stopPropagation()">
+                <i class="fa-solid fa-location-dot"></i> @Model.Office
+            </a>
+        }
 
         <div class="divider"></div>
 
@@ -357,6 +375,16 @@
                 <div class="info-content"><p class="info-label">Phone</p><p class="info-value">@Model.Phone</p></div>
                 <i class="fa-solid fa-check copy-tick"></i>
             </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Office))
+        {
+            <a class="info-row" style="text-decoration:none;"
+               href="https://www.google.com/maps/search/?api=1&query=@Uri.EscapeDataString(Model.Office)"
+               target="_blank" rel="noopener">
+                <div class="info-icon"><i class="fa-solid fa-location-dot" style="color:#2563eb;"></i></div>
+                <div class="info-content"><p class="info-label">Office / Branch</p><p class="info-value" style="color:#2563eb;">@Model.Office</p></div>
+                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;color:#93c5fd;align-self:center;"></i>
+            </a>
         }
         @if (!string.IsNullOrWhiteSpace(Model.Email))
         {
