@@ -15,23 +15,16 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: Arial, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 30px 16px 60px;
-            position: relative;
-            overflow-x: hidden;
+            font-family: Arial, sans-serif; min-height: 100vh;
+            display: flex; justify-content: center; align-items: flex-start;
+            padding: 30px 16px 60px; position: relative; overflow-x: hidden;
         }
 
         .bg {
             position: fixed; inset: 0; z-index: 0;
             background:
                 linear-gradient(155deg,
-                    rgba(10,25,70,0.92) 0%,
-                    rgba(30,64,175,0.88) 45%,
-                    rgba(15,40,100,0.95) 100%),
+                    rgba(10,25,70,0.92) 0%, rgba(30,64,175,0.88) 45%, rgba(15,40,100,0.95) 100%),
                 url('/bg.png') center/cover no-repeat;
         }
 
@@ -39,8 +32,8 @@
 
         .back {
             display: inline-flex; align-items: center; gap: 6px;
-            color: rgba(255,255,255,0.5); font-size: 13px;
-            text-decoration: none; margin-bottom: 16px; transition: color 0.15s;
+            color: rgba(255,255,255,0.5); font-size: 13px; text-decoration: none;
+            margin-bottom: 16px; transition: color 0.15s;
         }
         .back:hover { color: rgba(255,255,255,0.85); }
 
@@ -49,7 +42,7 @@
             border-top: 5px solid #2563eb; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
         }
 
-        /* ── Photo section ── */
+        /* Photo section */
         .photo-section { text-align: center; margin-bottom: 18px; }
 
         .photo-section-label {
@@ -58,14 +51,12 @@
         }
 
         .photo-top-wrap {
-            position: relative; display: inline-block;
-            cursor: pointer; margin-bottom: 6px;
+            position: relative; display: inline-block; margin-bottom: 10px;
         }
 
         .photo-top-circle {
             width: 96px; height: 96px; border-radius: 50%;
-            border: 3px solid #e5e7eb;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+            border: 3px solid #e5e7eb; box-shadow: 0 4px 14px rgba(0,0,0,0.1);
             background: #f8fafc; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
         }
@@ -83,20 +74,29 @@
         .camera-badge:hover { background: #1d4ed8; transform: scale(1.1); }
         .camera-badge i { font-size: 12px; color: #fff; }
 
-        .photo-tap-hint {
-            font-size: 11px; color: #93c5fd; font-weight: 600;
-            letter-spacing: 0.3px; margin-bottom: 12px; display: block;
+        /* Two photo action buttons */
+        .photo-actions {
+            display: flex; gap: 8px; justify-content: center; margin-bottom: 12px;
         }
+        .photo-action-btn {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 9px 16px; border: 1.5px solid #e5e7eb; border-radius: 10px;
+            background: #fff; cursor: pointer; color: #2563eb;
+            font-size: 13px; font-weight: 700;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .photo-action-btn i { font-size: 18px; }
+        .photo-action-btn span { font-size: 10px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+        .photo-action-btn:hover { border-color: #2563eb; background: #eff6ff; }
 
+        /* Avatar OR row */
         .avatar-section { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 
         .avatar-or {
             display: flex; align-items: center; gap: 8px;
             width: 100%; max-width: 220px;
         }
-        .avatar-or::before, .avatar-or::after {
-            content: ''; flex: 1; height: 1px; background: #e5e7eb;
-        }
+        .avatar-or::before, .avatar-or::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
         .avatar-or span {
             font-size: 10px; color: #9ca3af; font-weight: 700;
             letter-spacing: 1px; text-transform: uppercase; white-space: nowrap;
@@ -108,55 +108,34 @@
             display: flex; flex-direction: column; align-items: center; gap: 4px;
             padding: 10px 18px; border: 1.5px solid #e5e7eb; border-radius: 10px;
             background: #fff; cursor: pointer;
-            transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+            transition: border-color 0.15s, background 0.15s;
         }
         .avatar-quick-btn .av-icon { font-size: 26px; color: #2563eb; line-height: 1; }
-        .avatar-quick-btn .av-label {
-            font-size: 10px; font-weight: 700; color: #6b7280;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
+        .avatar-quick-btn .av-label { font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
         .avatar-quick-btn:hover { border-color: #2563eb; background: #eff6ff; }
         .avatar-quick-btn.selected { border-color: #2563eb; background: #dbeafe; }
 
-        /* ── Form ── */
+        /* Form */
         h1 { text-align: center; color: #111827; font-size: 19px; font-weight: 800; margin-bottom: 3px; }
         .sub { text-align: center; color: #6b7280; font-size: 12px; }
         .divider { height: 1px; background: #e5e7eb; margin: 16px 0; }
-
-        .section-title {
-            font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
-            text-transform: uppercase; color: #2563eb; margin-bottom: 10px;
-        }
-
+        .section-title { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #2563eb; margin-bottom: 10px; }
         .form-group { margin-bottom: 11px; }
-
-        label {
-            display: block; font-size: 11px; font-weight: 700; color: #374151;
-            text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px;
-        }
-
+        label { display: block; font-size: 11px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px; }
         input {
             width: 100%; padding: 10px 13px; border: 1.5px solid #e5e7eb;
-            border-radius: 9px; font-size: 14px; color: #111827;
-            background: #f9fafb; outline: none;
-            transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+            border-radius: 9px; font-size: 14px; color: #111827; background: #f9fafb;
+            outline: none; transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
         }
-        input:focus {
-            border-color: #2563eb; background: #fff;
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-        }
+        input:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
         input.empid { font-weight: 800; font-size: 15px; border-color: #2563eb; color: #1d4ed8; }
         input[readonly] { background: #eff6ff; color: #1d4ed8; cursor: default; }
         .hint { font-size: 11px; color: #9ca3af; margin-top: 3px; }
 
-        .alert {
-            padding: 10px 14px; border-radius: 9px; font-size: 13px;
-            font-weight: 700; margin-bottom: 14px; text-align: center;
-        }
+        .alert { padding: 10px 14px; border-radius: 9px; font-size: 13px; font-weight: 700; margin-bottom: 14px; text-align: center; }
         .alert-error { background: #fee2e2; color: #b91c1c; }
         .alert-info  { background: #dbeafe; color: #1d4ed8; }
 
-        /* ── Buttons ── */
         .btn {
             display: flex; align-items: center; justify-content: center;
             gap: 8px; width: 100%; padding: 13px 16px; border-radius: 11px;
@@ -166,22 +145,10 @@
         }
         .btn:last-child { margin-bottom: 0; }
         .btn:active { transform: scale(0.97); }
-
-        .btn-save {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            box-shadow: 0 4px 14px rgba(37,99,235,0.35);
-        }
+        .btn-save { background: linear-gradient(135deg, #2563eb, #1d4ed8); box-shadow: 0 4px 14px rgba(37,99,235,0.35); }
         .btn-save:hover { box-shadow: 0 6px 20px rgba(37,99,235,0.45); }
-
-        .btn-qr {
-            background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
-            box-shadow: 0 4px 14px rgba(30,58,138,0.3);
-        }
-
-        .btn-reset {
-            background: transparent; border: 1.5px solid #e5e7eb;
-            color: #dc2626; font-size: 13px; padding: 10px; box-shadow: none;
-        }
+        .btn-qr { background: linear-gradient(135deg, #1d4ed8, #1e3a8a); box-shadow: 0 4px 14px rgba(30,58,138,0.3); }
+        .btn-reset { background: transparent; border: 1.5px solid #e5e7eb; color: #dc2626; font-size: 13px; padding: 10px; box-shadow: none; }
         .btn-reset:hover { background: #fee2e2; border-color: #fca5a5; }
     </style>
 </head>
@@ -194,15 +161,19 @@
 
     <div class="card">
 
-        <!-- Photo section at top -->
+        <!-- ── Photo section ── -->
         <div class="photo-section">
             <input type="hidden" name="Photo" id="photoData" value="@Model.Photo" />
+            <!-- Upload from file explorer (works on all devices) -->
             <input type="file" id="photoFileInput" accept="image/*"
+                   style="display:none;" onchange="handlePhotoFile(this)" />
+            <!-- Camera capture (mobile only — on desktop opens file picker too) -->
+            <input type="file" id="photoCameraInput" accept="image/*" capture="user"
                    style="display:none;" onchange="handlePhotoFile(this)" />
 
             <p class="photo-section-label">Profile Photo</p>
 
-            <div class="photo-top-wrap" onclick="document.getElementById('photoFileInput').click()">
+            <div class="photo-top-wrap">
                 <div class="photo-top-circle" id="photoTopCircle">
                     @if (!string.IsNullOrWhiteSpace(Model.Photo) && Model.Photo.StartsWith("data:"))
                     {
@@ -221,13 +192,26 @@
                         <img src="/dbp-logo.png" alt="DBP" style="width:58px;height:58px;object-fit:contain;" />
                     }
                 </div>
-                <div class="camera-badge" onclick="event.stopPropagation(); document.getElementById('photoFileInput').click()">
+                <div class="camera-badge" onclick="document.getElementById('photoCameraInput').click()">
                     <i class="fa-solid fa-camera"></i>
                 </div>
             </div>
 
-            <span class="photo-tap-hint">Tap circle or camera icon to upload / take selfie</span>
+            <!-- Two clear buttons: Take Photo (camera) and Upload (file) -->
+            <div class="photo-actions">
+                <button type="button" class="photo-action-btn"
+                        onclick="document.getElementById('photoCameraInput').click()">
+                    <i class="fa-solid fa-camera"></i>
+                    <span>Take Photo</span>
+                </button>
+                <button type="button" class="photo-action-btn"
+                        onclick="document.getElementById('photoFileInput').click()">
+                    <i class="fa-solid fa-image"></i>
+                    <span>Upload Image</span>
+                </button>
+            </div>
 
+            <!-- Default avatar picker -->
             <div class="avatar-section">
                 <div class="avatar-or"><span>or pick a default avatar</span></div>
                 <div class="avatar-pick-row">

@@ -110,13 +110,22 @@
             margin: 0 auto 36px;
         }
 
-        /* Steps */
+        /* Steps — hidden by default, shown on CTA click */
         .steps {
             display: flex;
             flex-direction: column;
             gap: 12px;
             margin-bottom: 36px;
             text-align: left;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.5s ease, opacity 0.4s ease, margin-bottom 0.4s ease;
+        }
+        .steps.visible {
+            max-height: 400px;
+            opacity: 1;
+            margin-bottom: 36px;
         }
         .step {
             display: flex;
@@ -267,7 +276,7 @@
 
     <div class="rule"></div>
 
-    <div class="steps">
+    <div class="steps" id="stepsBlock">
         <div class="step">
             <div class="step-num">1</div>
             <div class="step-text">
@@ -291,7 +300,7 @@
         </div>
     </div>
 
-    <a href="/start" class="cta">Create My Digital Card</a>
+    <a href="/start" class="cta" id="ctaBtn" onclick="revealSteps(event)">Create My Digital Card</a>
 
     <!-- Returning employee lookup -->
     <div class="lookup-box">
@@ -309,6 +318,17 @@
 </div>
 
 <script>
+    function revealSteps(e) {
+        e.preventDefault();
+        var steps = document.getElementById('stepsBlock');
+        var btn   = document.getElementById('ctaBtn');
+        steps.classList.add('visible');
+        btn.textContent = 'Continue →';
+        btn.onclick = null;          // next click goes straight to /start
+        btn.href = '/start';
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
     function goToCard() {
         var empId = document.getElementById('empIdInput').value.trim();
         var errEl = document.getElementById('lookupError');
