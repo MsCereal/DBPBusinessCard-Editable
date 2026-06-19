@@ -138,60 +138,134 @@ namespace DBPBusinessCardEditable.Controllers
             });
         }
 
-        // GET /admin/clear  — wipe all demo cards (show count + confirm button)
+        // GET /admin/clear  — admin only, password protected
         [HttpGet("/admin/clear")]
-        public IActionResult AdminClear()
+        public IActionResult AdminClear(string key)
         {
+            string adminKey = Environment.GetEnvironmentVariable("ADMIN_KEY") ?? "dbpadmin2026";
+            if (key != adminKey)
+            {
+                return Content(AdminLoginPage(""), "text/html");
+            }
             int count = _profileService.Count();
-            return Content($@"<!DOCTYPE html>
-<html><head><meta charset='utf-8'/>
-<title>Admin – Clear Cards</title>
-<style>
-body{{font-family:Arial,sans-serif;background:#0f172a;color:#f1f5f9;
-display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}}
-.box{{background:#1e293b;border-radius:16px;padding:32px 28px;max-width:360px;width:100%;text-align:center;}}
-h2{{margin-bottom:8px;font-size:20px;}}
-p{{color:#94a3b8;margin-bottom:24px;font-size:14px;}}
-.count{{font-size:36px;font-weight:800;color:#60a5fa;margin-bottom:4px;}}
-.btn{{display:block;width:100%;padding:14px;border-radius:10px;border:none;
-font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;margin-bottom:10px;}}
-.btn-danger{{background:#dc2626;color:#fff;}}
-.btn-cancel{{background:#334155;color:#f1f5f9;}}
-</style></head>
-<body><div class='box'>
-<p class='count'>{count}</p>
-<h2>Cards in Database</h2>
-<p>Click below to permanently delete all demo cards. This cannot be undone.</p>
-<form method='post' action='/admin/clear'>
-<button type='submit' class='btn btn-danger'
-onclick=""return confirm('Delete all {count} cards?')"">🗑 Delete All Cards</button>
-</form>
-<a href='/' class='btn btn-cancel'>← Back to Home</a>
-</div></body></html>", "text/html");
+            return Content(AdminDashboard(count, adminKey, null), "text/html");
         }
 
         // POST /admin/clear  — execute the clear
         [HttpPost("/admin/clear")]
-        public IActionResult AdminClearPost()
+        public IActionResult AdminClearPost(string key, string action)
         {
-            int deleted = _profileService.ClearAll();
-            return Content($@"<!DOCTYPE html>
+            string adminKey = Environment.GetEnvironmentVariable("ADMIN_KEY") ?? "dbpadmin2026";
+            if (key != adminKey)
+                return Content(AdminLoginPage("Invalid password."), "text/html");
+
+            if (action == "clear")
+            {
+                int deleted = _profileService.ClearAll();
+                return Content(AdminDashboard(0, adminKey, $"{deleted} card(s) deleted successfully."), "text/html");
+            }
+            return RedirectToAction("AdminClear", new { key });
+        }
+
+        // POST /admin/login
+        [HttpPost("/admin/login")]
+        public IActionResult AdminLogin(string password)
+        {
+            string adminKey = Environment.GetEnvironmentVariable("ADMIN_KEY") ?? "dbpadmin2026";
+            if (password == adminKey)
+                return Redirect($"/admin/clear?key={adminKey}");
+            return Content(AdminLoginPage("⚠️ Incorrect password. Access denied."), "text/html");
+        }
+
+        private string AdminLoginPage(string error) => $@"<!DOCTYPE html>
 <html><head><meta charset='utf-8'/>
-<title>Admin – Cards Cleared</title>
+<title>Admin – DBP Digital Business Card</title>
 <style>
-body{{font-family:Arial,sans-serif;background:#0f172a;color:#f1f5f9;
-display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}}
-.box{{background:#1e293b;border-radius:16px;padding:32px 28px;max-width:360px;width:100%;text-align:center;}}
-h2{{margin-bottom:8px;font-size:20px;color:#4ade80;}}
-p{{color:#94a3b8;margin-bottom:24px;font-size:14px;}}
-.btn{{display:block;width:100%;padding:14px;border-radius:10px;background:#2563eb;
-color:#fff;font-size:15px;font-weight:700;text-decoration:none;}}
+*{{box-sizing:border-box;margin:0;padding:0;}}
+body{{font-family:Arial,sans-serif;background:#0f172a;
+display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}}
+.box{{background:#1e293b;border:1px solid #334155;border-radius:16px;
+padding:36px 28px;max-width:360px;width:100%;text-align:center;
+box-shadow:0 16px 40px rgba(0,0,0,0.4);}}
+.lock{{font-size:40px;margin-bottom:16px;}}
+h2{{color:#f1f5f9;font-size:20px;font-weight:800;margin-bottom:6px;}}
+.sub{{color:#94a3b8;font-size:13px;margin-bottom:8px;}}
+.restricted{{display:inline-block;background:rgba(220,38,38,0.15);
+border:1px solid rgba(220,38,38,0.3);color:#fca5a5;
+font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+padding:3px 10px;border-radius:20px;margin-bottom:24px;}}
+input{{width:100%;padding:12px 14px;border:1.5px solid #334155;border-radius:10px;
+background:#0f172a;color:#f1f5f9;font-size:15px;outline:none;margin-bottom:12px;
+text-align:center;letter-spacing:2px;}}
+input:focus{{border-color:#2563eb;}}
+input::placeholder{{letter-spacing:0;color:#475569;font-size:13px;}}
+.btn{{width:100%;padding:13px;border:none;border-radius:10px;
+background:#2563eb;color:#fff;font-size:15px;font-weight:700;cursor:pointer;}}
+.btn:hover{{background:#1d4ed8;}}
+.error{{color:#fca5a5;font-size:13px;margin-bottom:14px;
+background:rgba(220,38,38,0.1);padding:8px 12px;border-radius:8px;}}
 </style></head>
 <body><div class='box'>
-<h2>✅ Done</h2>
-<p>{deleted} card(s) deleted. The database is now empty.</p>
-<a href='/' class='btn'>← Back to Home</a>
-</div></body></html>", "text/html");
-        }
+<div class='lock'>🔐</div>
+<h2>Admin Access</h2>
+<p class='sub'>DBP Digital Business Card</p>
+<span class='restricted'>⚑ Restricted Area</span>
+{(string.IsNullOrEmpty(error) ? "" : $"<p class='error'>{error}</p>")}
+<form method='post' action='/admin/login'>
+<input type='password' name='password' placeholder='Enter admin password' autofocus />
+<button type='submit' class='btn'>Unlock Dashboard</button>
+</form>
+</div></body></html>";
+
+        private string AdminDashboard(int count, string key, string message) => $@"<!DOCTYPE html>
+<html><head><meta charset='utf-8'/>
+<title>Admin Dashboard – DBP</title>
+<style>
+*{{box-sizing:border-box;margin:0;padding:0;}}
+body{{font-family:Arial,sans-serif;background:#0f172a;
+display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}}
+.box{{background:#1e293b;border:1px solid #334155;border-radius:16px;
+padding:36px 28px;max-width:400px;width:100%;text-align:center;
+box-shadow:0 16px 40px rgba(0,0,0,0.4);}}
+.restricted{{display:inline-block;background:rgba(220,38,38,0.15);
+border:1px solid rgba(220,38,38,0.3);color:#fca5a5;
+font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+padding:3px 10px;border-radius:20px;margin-bottom:20px;}}
+h2{{color:#f1f5f9;font-size:20px;font-weight:800;margin-bottom:4px;}}
+.sub{{color:#64748b;font-size:12px;margin-bottom:24px;}}
+.stat-box{{background:#0f172a;border:1px solid #334155;border-radius:12px;
+padding:20px;margin-bottom:24px;}}
+.stat-num{{font-size:48px;font-weight:800;color:#60a5fa;line-height:1;}}
+.stat-label{{color:#64748b;font-size:13px;margin-top:4px;}}
+.success{{background:rgba(22,163,74,0.15);border:1px solid rgba(22,163,74,0.3);
+color:#4ade80;font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:20px;}}
+.btn{{display:block;width:100%;padding:13px 16px;border-radius:10px;
+border:none;font-size:14px;font-weight:700;cursor:pointer;
+text-decoration:none;text-align:center;margin-bottom:10px;}}
+.btn:last-child{{margin-bottom:0;}}
+.btn-danger{{background:#dc2626;color:#fff;}}
+.btn-danger:hover{{background:#b91c1c;}}
+.btn-home{{background:#334155;color:#f1f5f9;}}
+.btn-home:hover{{background:#475569;}}
+</style></head>
+<body><div class='box'>
+<span class='restricted'>⚑ Restricted Area — Admin Only</span>
+<h2>Admin Dashboard</h2>
+<p class='sub'>DBP Digital Business Card System</p>
+{(string.IsNullOrEmpty(message) ? "" : $"<div class='success'>✅ {message}</div>")}
+<div class='stat-box'>
+<div class='stat-num'>{count}</div>
+<div class='stat-label'>Cards currently in database</div>
+</div>
+<form method='post' action='/admin/clear?key={key}' style='margin-bottom:10px;'>
+<input type='hidden' name='key' value='{key}' />
+<input type='hidden' name='action' value='clear' />
+<button type='submit' class='btn btn-danger'
+onclick=""return confirm('Delete all {count} cards? This cannot be undone.')"">
+🗑 Delete All Demo Cards
+</button>
+</form>
+<a href='/' class='btn btn-home'>← Back to Home</a>
+</div></body></html>";
     }
 }
