@@ -18,17 +18,13 @@
         body {
             font-family: Arial, sans-serif;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px 50px;
-            overflow-y: auto;
-            overflow-x: hidden;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 36px 20px 50px;
+            overflow-y: auto; overflow-x: hidden;
             position: relative;
         }
 
-        /* Unified background */
         .bg {
             position: fixed; inset: 0; z-index: 0;
             background:
@@ -41,148 +37,165 @@
 
         .wrap {
             position: relative; z-index: 1;
-            width: 100%; max-width: 360px;
+            width: 100%; max-width: 400px;
             text-align: center;
         }
 
-        /* Brand header */
+        /* ── Brand ── */
         .brand {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: center;
+            gap: 12px; margin-bottom: 24px;
         }
-        .brand img { height: 44px; object-fit: contain; }
-        .brand-text { color: #f1f5f9; font-size: 16px; font-weight: 700; letter-spacing: 0.3px; }
+        .brand img { height: 42px; object-fit: contain; }
+        .brand-text { color: #f1f5f9; font-size: 15px; font-weight: 700; letter-spacing: 0.3px; }
 
-        /* Employee profile */
-        .profile {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 22px;
-            gap: 10px;
+        /* ── Profile ── */
+        .profile { margin-bottom: 24px; }
+
+        .profile-photo-wrap {
+            margin-bottom: 12px;
         }
-        .profile-photo {
-            width: 72px; height: 72px;
+        .profile-photo, .profile-photo-placeholder {
+            width: 80px; height: 80px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid rgba(255,255,255,0.25);
-            background: rgba(255,255,255,0.1);
+            border: 3px solid rgba(255,255,255,0.35);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            display: block; margin: 0 auto;
         }
         .profile-photo-placeholder {
-            width: 72px; height: 72px;
-            border-radius: 50%;
-            background: rgba(37,99,235,0.3);
-            border: 3px solid rgba(255,255,255,0.2);
+            background: rgba(37,99,235,0.4);
             display: flex; align-items: center; justify-content: center;
             overflow: hidden;
         }
-        .profile-photo-placeholder i { font-size: 28px; color: rgba(255,255,255,0.5); }
+        .profile-photo-placeholder i { font-size: 32px; color: rgba(255,255,255,0.6); }
         .profile-photo-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
         .profile-name {
-            color: #f1f5f9; font-size: 17px; font-weight: 700; line-height: 1.2;
-        }
-        .profile-title {
-            color: rgba(255,255,255,0.55); font-size: 12px; margin-top: 2px;
-        }
-        .profile-empid {
-            color: rgba(255,255,255,0.3); font-size: 11px; letter-spacing: 1px; margin-top: 1px;
+            color: #ffffff;
+            font-size: 20px; font-weight: 800;
+            letter-spacing: 0.3px;
+            margin-bottom: 6px;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.4);
         }
 
-        /* QR frame */
+        /* Title pill — readable against dark bg */
+        .profile-title-pill {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #f1f5f9;
+            font-size: 12px; font-weight: 600;
+            padding: 4px 12px; border-radius: 20px;
+            margin-bottom: 5px;
+            backdrop-filter: blur(4px);
+        }
+
+        .profile-empid {
+            color: rgba(255,255,255,0.5);
+            font-size: 11px; letter-spacing: 1.5px;
+            font-weight: 600;
+        }
+
+        /* ── QR Card ── */
+        .qr-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(8px);
+        }
+
         .qr-frame {
             background: #fff;
-            border-radius: 18px;
-            padding: 16px;
+            border-radius: 14px;
+            padding: 14px;
             display: inline-block;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.12),
-                        0 20px 50px rgba(0,0,0,0.45);
-            margin-bottom: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            margin-bottom: 14px;
             animation: pulse 3s ease-in-out infinite;
         }
         @@keyframes pulse {
-            0%,100% { box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 20px 50px rgba(0,0,0,0.45); }
-            50%     { box-shadow: 0 0 0 6px rgba(37,99,235,0.25), 0 24px 60px rgba(0,0,0,0.5); }
+            0%,100% { box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+            50%     { box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 0 6px rgba(37,99,235,0.2); }
         }
-        .qr-frame img { display: block; width: 220px; height: 220px; border-radius: 6px; }
+        .qr-frame img { display: block; width: 200px; height: 200px; border-radius: 4px; }
 
-        /* Scan label */
-        .scan-label {
-            color: rgba(255,255,255,0.5); font-size: 11px;
-            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px;
+        .qr-instruction {
+            color: rgba(255,255,255,0.9);
+            font-size: 13px; font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .qr-sub {
+            color: rgba(255,255,255,0.45);
+            font-size: 11px;
         }
 
-        /* OR divider */
-        .or-row {
+        /* ── Action buttons ── */
+        .link-section {
+            margin-bottom: 20px;
+        }
+
+        .divider-row {
             display: flex; align-items: center; gap: 10px;
-            margin: 0 auto 14px; max-width: 300px;
+            margin: 0 auto 14px; max-width: 340px;
         }
-        .or-row::before,.or-row::after {
-            content:''; flex:1; height:1px; background:rgba(255,255,255,0.1);
+        .divider-row::before, .divider-row::after {
+            content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.12);
         }
-        .or-row span { color: rgba(255,255,255,0.3); font-size: 10px; letter-spacing: 2px; }
+        .divider-row span { color: rgba(255,255,255,0.35); font-size: 10px; letter-spacing: 2px; white-space: nowrap; }
 
-        /* Copy link row */
-        .copy-row {
-            display: flex; gap: 8px; align-items: stretch;
-            max-width: 340px; margin: 0 auto 24px;
-        }
-        .copy-box {
-            flex: 1; min-width: 0;
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 10px;
-            padding: 10px 12px;
-            color: #93c5fd; font-size: 11px;
-            word-break: break-all; text-align: left;
+        /* Two side-by-side buttons: Open Card + Copy Link */
+        .access-row {
+            display: flex; gap: 10px; margin-bottom: 0;
         }
 
-        /* Unified buttons */
         .btn {
             display: flex; align-items: center; justify-content: center;
-            gap: 8px; padding: 12px 16px;
-            border-radius: 11px; font-size: 14px; font-weight: 700;
+            gap: 8px; padding: 13px 16px;
+            border-radius: 12px; font-size: 14px; font-weight: 700;
             cursor: pointer; border: none; text-decoration: none;
             transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
-            white-space: nowrap; flex-shrink: 0;
+            flex: 1;
         }
         .btn:active { transform: scale(0.97); }
         .btn i { font-size: 14px; }
 
-        /* Primary blue — solid */
-        .btn-primary {
+        /* "Open Card" — solid blue — primary action for laptop/web */
+        .btn-open {
             background: #2563eb; color: #fff;
-            box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+            box-shadow: 0 4px 14px rgba(37,99,235,0.4);
         }
-        .btn-primary:hover { background: #1d4ed8; box-shadow: 0 6px 18px rgba(37,99,235,0.45); }
+        .btn-open:hover { background: #1d4ed8; }
 
-        /* Outline white — for secondary actions */
-        .btn-outline {
-            background: rgba(255,255,255,0.08);
+        /* "Copy Link" — glass outline */
+        .btn-copy {
+            background: rgba(255,255,255,0.1);
             border: 1.5px solid rgba(255,255,255,0.2);
             color: #f1f5f9;
         }
-        .btn-outline:hover { background: rgba(255,255,255,0.15); }
+        .btn-copy:hover { background: rgba(255,255,255,0.18); }
 
-        /* Danger outline — reset only, subtle */
-        .btn-danger {
-            background: transparent;
-            border: 1.5px solid rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.45);
-            font-size: 13px;
-        }
-        .btn-danger:hover { border-color: rgba(239,68,68,0.5); color: #fca5a5; }
-
-        /* Action row */
-        .action-row {
+        /* ── Owner actions ── */
+        .owner-row {
             display: flex; gap: 10px;
-            max-width: 340px; margin: 0 auto;
         }
-        .action-row > * { flex: 1; }
-        .action-row form { display: flex; }
-        .action-row form button { width: 100%; }
+        .btn-edit {
+            background: rgba(255,255,255,0.08);
+            border: 1.5px solid rgba(255,255,255,0.2);
+            color: #f1f5f9; flex: 1;
+        }
+        .btn-edit:hover { background: rgba(255,255,255,0.15); }
+
+        .btn-reset {
+            background: transparent;
+            border: 1.5px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.4);
+            font-size: 13px; flex: 1;
+        }
+        .btn-reset:hover { border-color: rgba(239,68,68,0.5); color: #fca5a5; }
     </style>
 </head>
 <body>
@@ -197,64 +210,71 @@
         <span class="brand-text">Digital Business Card</span>
     </div>
 
-    <!-- Employee profile -->
+    <!-- Employee Profile -->
     <div class="profile">
-        @if (!string.IsNullOrWhiteSpace(Model.Photo) && Model.Photo.StartsWith("data:"))
-        {
-            <img src="@Model.Photo" alt="@Model.Name" class="profile-photo" />
-        }
-        else if (Model.Photo == "avatar:male")
-        {
-            <div class="profile-photo-placeholder">
-                <img src="/dbp-boy.png" alt="Male" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
-            </div>
-        }
-        else if (Model.Photo == "avatar:female")
-        {
-            <div class="profile-photo-placeholder">
-                <img src="/dbp-girl.png" alt="Female" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
-            </div>
-        }
-        else
-        {
-            <div class="profile-photo-placeholder">
-                <i class="fa-solid fa-user"></i>
-            </div>
-        }
-        <div class="profile-text">
-            <p class="profile-name">@Model.Name</p>
-            @if (!string.IsNullOrWhiteSpace(Model.Title))
+        <div class="profile-photo-wrap">
+            @if (!string.IsNullOrWhiteSpace(Model.Photo) && Model.Photo.StartsWith("data:"))
             {
-                <p class="profile-title">@Model.Title</p>
+                <img src="@Model.Photo" alt="@Model.Name" class="profile-photo" />
             }
-            <p class="profile-empid">@Model.EmpId</p>
+            else if (Model.Photo == "avatar:male")
+            {
+                <div class="profile-photo-placeholder">
+                    <img src="/dbp-boy.png" alt="Male" style="width:100%;height:100%;object-fit:cover;" />
+                </div>
+            }
+            else if (Model.Photo == "avatar:female")
+            {
+                <div class="profile-photo-placeholder">
+                    <img src="/dbp-girl.png" alt="Female" style="width:100%;height:100%;object-fit:cover;" />
+                </div>
+            }
+            else
+            {
+                <div class="profile-photo-placeholder">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            }
+        </div>
+
+        <p class="profile-name">@Model.Name</p>
+        @if (!string.IsNullOrWhiteSpace(Model.Title))
+        {
+            <p class="profile-title-pill">@Model.Title</p>
+        }
+        <p class="profile-empid">@Model.EmpId</p>
+    </div>
+
+    <!-- QR Code card -->
+    <div class="qr-card">
+        <div class="qr-frame">
+            <img src="/QR/Generate/@empId" alt="QR Code" />
+        </div>
+        <p class="qr-instruction"><i class="fa-solid fa-camera" style="margin-right:6px;opacity:0.7;"></i>Scan with your phone camera</p>
+        <p class="qr-sub">to view @Model.Name's digital business card</p>
+    </div>
+
+    <!-- Access section: Open Card + Copy Link -->
+    <div class="link-section">
+        <div class="divider-row"><span>OR ACCESS DIRECTLY</span></div>
+        <div class="access-row">
+            <a href="@cardUrl" class="btn btn-open" target="_blank" rel="noopener">
+                <i class="fa-solid fa-id-card"></i> Open Card
+            </a>
+            <button class="btn btn-copy" id="copyBtn" onclick="copyLink()">
+                <i class="fa-solid fa-copy"></i> Copy Link
+            </button>
         </div>
     </div>
 
-    <!-- QR Code -->
-    <div class="qr-frame">
-        <img src="/QR/Generate/@empId" alt="QR Code for @Model.Name" />
-    </div>
-
-    <p class="scan-label">Scan to view card</p>
-
-    <div class="or-row"><span>OR COPY LINK</span></div>
-
-    <div class="copy-row">
-        <div class="copy-box" id="linkBox">@cardUrl</div>
-        <button class="btn btn-primary" id="copyBtn" onclick="copyLink()">
-            <i class="fa-solid fa-copy"></i> Copy
-        </button>
-    </div>
-
     <!-- Owner actions -->
-    <div class="action-row">
-        <a href="/setup?empId=@empId" class="btn btn-outline">
+    <div class="owner-row">
+        <a href="/setup?empId=@empId" class="btn btn-edit">
             <i class="fa-solid fa-pen-to-square"></i> Edit Card
         </a>
-        <form method="post" action="/reset/@empId">
+        <form method="post" action="/reset/@empId" style="flex:1;display:flex;">
             @Html.AntiForgeryToken()
-            <button type="submit" class="btn btn-danger"
+            <button type="submit" class="btn btn-reset" style="width:100%;"
                     onclick="return confirm('Reset all card info? This cannot be undone.')">
                 <i class="fa-solid fa-rotate-left"></i> Reset
             </button>
@@ -269,10 +289,12 @@
         navigator.clipboard.writeText(cardUrl).then(function() {
             var btn = document.getElementById('copyBtn');
             btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-            btn.style.background = '#16a34a';
+            btn.style.background = 'rgba(22,163,74,0.6)';
+            btn.style.borderColor = 'rgba(22,163,74,0.5)';
             setTimeout(function() {
-                btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy';
+                btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy Link';
                 btn.style.background = '';
+                btn.style.borderColor = '';
             }, 2000);
         }).catch(function() {
             var el = document.createElement('textarea');
