@@ -7,10 +7,6 @@ RUN dotnet publish "DBPBusinessCardEditable/DBPBusinessCardEditable.csproj" -c R
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS final
 WORKDIR /app
-
-# Install SQLite native library
-RUN apt-get update && apt-get install -y libsqlite3-dev && rm -rf /var/lib/apt/lists/*
-
 COPY --from=build /app/publish .
 
 ENV ASPNETCORE_URLS=http://+:8080
