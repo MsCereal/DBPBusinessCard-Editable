@@ -108,6 +108,46 @@ namespace DBPBusinessCardEditable.Services
             return cmd.ExecuteNonQuery();
         }
 
+        /// <summary>Delete a single card by EmpId.</summary>
+        public void Delete(string empId)
+        {
+            using var conn = new SqliteConnection(_connectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "DELETE FROM Cards WHERE EmpId = @id;";
+            cmd.Parameters.AddWithValue("@id", empId.Trim());
+            cmd.ExecuteNonQuery();
+        }
+
+        /// <summary>Get all cards — for admin API.</summary>
+        public System.Collections.Generic.List<CardProfile> GetAll()
+        {
+            var list = new System.Collections.Generic.List<CardProfile>();
+            using var conn = new SqliteConnection(_connectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT EmpId, Name, Title, Org, Phone, Email, GitHub, LinkedIn, Portfolio, Office, LastUpdated FROM Cards ORDER BY LastUpdated DESC;";
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(new CardProfile
+                {
+                    EmpId     = reader["EmpId"]?.ToString() ?? "",
+                    Name      = reader["Name"]?.ToString() ?? "",
+                    Title     = reader["Title"]?.ToString() ?? "",
+                    Org       = reader["Org"]?.ToString() ?? "",
+                    Phone     = reader["Phone"]?.ToString() ?? "",
+                    Email     = reader["Email"]?.ToString() ?? "",
+                    GitHub    = reader["GitHub"]?.ToString() ?? "",
+                    LinkedIn  = reader["LinkedIn"]?.ToString() ?? "",
+                    Portfolio = reader["Portfolio"]?.ToString() ?? "",
+                    Office    = reader["Office"]?.ToString() ?? "",
+                    LastUpdated = DateTime.TryParse(reader["LastUpdated"]?.ToString(), out var dt) ? dt : DateTime.UtcNow
+                });
+            }
+            return list;
+        }
+
         /// <summary>Count of cards currently stored.</summary>
         public int Count()
         {
