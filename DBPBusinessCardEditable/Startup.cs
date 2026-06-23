@@ -19,6 +19,7 @@ namespace DBPBusinessCardEditable
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            SQLitePCL.Batteries_V2.Init();  // initialize native SQLite bundle
             services.AddControllersWithViews();
             // Single shared store — each user identified by cookie
             services.AddSingleton<CardProfileService>();
