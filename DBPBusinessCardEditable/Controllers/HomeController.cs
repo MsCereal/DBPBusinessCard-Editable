@@ -22,11 +22,11 @@ namespace DBPBusinessCardEditable.Controllers
         [HttpGet("/start")]
         public IActionResult Start() => View("Edit", new CardProfile());
 
-        // GET /card/{empId}
-        [HttpGet("/card/{empId}")]
-        public IActionResult ViewCard(string empId)
+        // GET /card/{token} — PUBLIC card, uses random token not EmpId
+        [HttpGet("/card/{token}")]
+        public IActionResult ViewCard(string token)
         {
-            var profile = _profileService.Get(empId);
+            var profile = _profileService.GetByToken(token);
             if (profile == null) return View("NotFound");
             return View("Card", profile);
         }

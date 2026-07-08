@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DBPBusinessCardEditable.Services;
+using Microsoft.AspNetCore.Mvc;
 using QRCoder;
 using SkiaSharp;
 using System.IO;
@@ -7,11 +8,24 @@ namespace DBPBusinessCardEditable.Controllers
 {
     public class QRController : Controller
     {
-        // GET /QR/Generate/{empId}  — returns QR PNG unique to this employee
+        private readonly CardProfileService _service;
+
+        public QRController(CardProfileService service)
+        {
+            _service = service;
+        }
+
+        // GET /QR/Generate/{empId} — generates QR using the card's private token
+        // URL encodes token not empId so EmpId never appears in the QR content
         [HttpGet("/QR/Generate/{empId}")]
         public IActionResult Generate(string empId)
         {
-            string url = $"{Request.Scheme}://{Request.Host}/card/{empId}";
+            var profile = _service.Get(empId);
+            // Use token if available, fallback to empId for backward compat
+            string token = (profile != null && !string.IsNullOrEmpty(profile.Token))
+                ? profile.Token
+                : empId;
+            string url = $"{Request.Scheme}://{Request.Host}/card/{token}";
             return BuildQrImage(url);
         }
 
@@ -42,12 +56,10 @@ namespace DBPBusinessCardEditable.Controllers
                         int lx = (size - logoSize) / 2;
                         int ly = (size - logoSize) / 2;
                         int pad = (int)(size * 0.02f);
-
                         using var whitePaint = new SKPaint { IsAntialias = true, Color = SKColors.White };
                         canvas.DrawRoundRect(new SKRoundRect(
                             new SKRect(lx - pad, ly - pad, lx + logoSize + pad, ly + logoSize + pad), 10, 10),
                             whitePaint);
-
                         using var logoPaint = new SKPaint { IsAntialias = true, FilterQuality = SKFilterQuality.High };
                         canvas.DrawBitmap(logo, new SKRect(lx, ly, lx + logoSize, ly + logoSize), logoPaint);
                     }

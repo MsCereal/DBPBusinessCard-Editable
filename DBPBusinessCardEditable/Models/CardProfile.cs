@@ -5,6 +5,7 @@ namespace DBPBusinessCardEditable.Models
     public class CardProfile
     {
         public string EmpId     { get; set; } = "";
+        public string Token     { get; set; } = "";   // random public token — used in URLs instead of EmpId
         public string Name      { get; set; } = "";
         public string Title     { get; set; } = "";
         public string Org       { get; set; } = "Development Bank of the Philippines";
@@ -13,8 +14,8 @@ namespace DBPBusinessCardEditable.Models
         public string GitHub    { get; set; } = "";
         public string LinkedIn  { get; set; } = "";
         public string Portfolio { get; set; } = "";
-        public string Office    { get; set; } = "";   // office/branch — opens Google Maps on click
-        public string Photo     { get; set; } = "";   // base64 data URI or "avatar:male" / "avatar:female"
+        public string Office    { get; set; } = "";
+        public string Photo     { get; set; } = "";
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
     }
 }

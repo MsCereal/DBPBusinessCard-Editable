@@ -2,7 +2,8 @@
 @{
     Layout = null;
     string empId   = Model.EmpId;
-    string cardUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/card/{empId}";
+    string token   = Model.Token;
+    string cardUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/card/{token}";
 }
 <!DOCTYPE html>
 <html lang="en">
