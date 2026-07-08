@@ -52,7 +52,9 @@ namespace DBPBusinessCardEditable.Controllers
                 return View("Edit", model);
             }
             _profileService.Save(model);
-            return RedirectToAction("QRScreen", new { empId = model.EmpId.Trim() });
+            // Redirect to QR screen using token — EmpId never in the URL
+            var saved = _profileService.Get(model.EmpId.Trim());
+            return Redirect($"/qr/{saved.Token}");
         }
 
         // GET /setup
@@ -72,12 +74,16 @@ namespace DBPBusinessCardEditable.Controllers
             return Json(new { exists = profile != null });
         }
 
-        // GET /qr/{empId}
-        [HttpGet("/qr/{empId}")]
-        public IActionResult QRScreen(string empId)
+        // GET /qr/{token} — employee's QR entrance screen, accessed via token not EmpId
+        [HttpGet("/qr/{token}")]
+        public IActionResult QRScreen(string token)
         {
-            var profile = _profileService.Get(empId);
+            // Try token first, fallback to empId for backward compat during transition
+            var profile = _profileService.GetByToken(token) ?? _profileService.Get(token);
             if (profile == null) return RedirectToAction("Start");
+            // If accessed by empId directly, redirect to token URL to hide empId
+            if (profile.Token != token && !string.IsNullOrEmpty(profile.Token))
+                return Redirect($"/qr/{profile.Token}");
             return View("QREntrance", profile);
         }
 
